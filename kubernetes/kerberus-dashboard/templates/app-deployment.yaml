@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kerberus-dashboard.app.fullname" . }}
+  labels:
+    {{- include "kerberus-dashboard.app.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.app.autoscaling.enabled }}
+  replicas: {{ .Values.app.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "kerberus-dashboard.app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.app.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "kerberus-dashboard.app.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.app.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kerberus-dashboard.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.app.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.app.securityContext | nindent 12 }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.container.port }}
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+          envFrom:
+          - secretRef:
+              name: {{ .Values.app.envSecret }}
+          # - configMapRef:
+          #     name: {{ include "kerberus-dashboard.db.fullname" . }}
+          volumeMounts:
+            - name: app-config
+              mountPath: {{ printf "/app/%s" (include "kerberus-dashboard.app.configFilename" .) }}
+              subPath: {{ include "kerberus-dashboard.app.configFilename" . }}
+      volumes:
+        - name: app-config
+          configMap:
+            name: {{ include "kerberus-dashboard.app.fullname" . }}-app-config
+      {{- with .Values.app.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.app.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

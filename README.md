@@ -13,7 +13,7 @@ This application is a monorepo setup with [lerna](https://lerna.js.org/) that in
 
 `Kerberus Dashboard` is powered by the CNCF sandbox project [Backstage](https://backstage.io/).
 
-<img src="https://backstage.io/img/cncf-white.svg" width="400" />
+<img src="https://raw.githubusercontent.com/cncf/artwork/abe5ed20d03d4b5580af2a8d825c779141959e30/other/cncf/horizontal/color/cncf-color.svg" width="400" />
 
 ## Repository layout
 

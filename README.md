@@ -1,22 +1,21 @@
 # Kerberus Dashboard
 
-## Description
+## Introduction
 
 `Kerberus Dashboard` provides a GUI for the self-service concept provided by Kerberus, including:
 
-* **service catalog** for managing all your software (microservices, libraries, data pipelines, websites, ML models, etc.)
-* **software templates** for quickly spinning up new projects and standardizing your tooling with your organization’s best practices
-* **technical documentation** for making it easy to create, maintain, find, and use technical documentation, using a "docs like code" approach
+* a **service catalog** for managing all your software (microservices, libraries, data pipelines, websites, ML models, etc.)
+* numerous **software templates** for quickly spinning up new projects and standardizing your tooling with your organization’s best practices
+* a **technical documentation** for making it easy to create, maintain, find, and use technical documentation, using a "docs like code" approach
 * a growing ecosystem of **open source plugins** that further expand Kerberus’s customizability and functionality
 
-This application is a monorepo setup with lerna that includes everything you need to run `Kerberus Dashboard` in your own environment.
+This application is a monorepo setup with [lerna](https://lerna.js.org/) that includes everything you need to run `Kerberus Dashboard` in your own environment.
 
-`Kerberus Dashboard` is made with Backstage, that is a CNCF Sandbox project. Read the announcement
-[here](https://backstage.io/blog/2020/09/23/backstage-cncf-sandbox).
+`Kerberus Dashboard` is powered by the CNCF sandbox project [Backstage](https://backstage.io/).
 
 <img src="https://backstage.io/img/cncf-white.svg" width="400" />
 
-### Structure of repository
+## Repository layout
 
 ```text
 .
@@ -34,39 +33,44 @@ This application is a monorepo setup with lerna that includes everything you nee
 
 ## Architecture
 
-There are 3 main components in this architecture:
-
-1. The core `Kerberus Dashboard` UI
-2. The UI plugins and their backing services
-3. Databases
+`Kerberus Dashboard`'s architecture is made up of three main components: the core `Kerberus Dashboard` UI, the UI plugins (and their backing services), and a database for each plugin.
 
 ### User Interface
 
-The UI is a thin, client-side wrapper around a set of plugins. It provides some core UI components and libraries for shared activities such as config management.
+The UI is a thin, *client-side wrapper* around a set of plugins. It provides some core UI components and libraries for shared activities such as configuration management.
 
-Running this architecture in a real environment typically involves containerising the components.
+Running this architecture in a real environment typically involves the containerization of components.
 
 ### Plugins and plugin backends
 
-Each plugin is a client side application which mounts itself on the UI. Plugins are written in TypeScript or JavaScript.
+Each plugin is a *client-side application* which mounts itself on the UI. Plugins are written in TypeScript or JavaScript.
 
 ### Databases
 
-The backend and its builtin plugins are based on the [Knex](http://knexjs.org/) library, and set up a separate logical database per plugin. This gives great isolation and lets them perform migrations and evolve separate from each other.
+The backend and its built-in plugins are based on the [Knex](http://knexjs.org/) library. A separate logical database is set up for each plugin. This provides great isolation and lets the plugins perform migrations and evolve independently of each other.
 
-The Knex library supports a multitude of databases, but `Kerberus Dashboard` is at the time of writing tested primarily against two of them: SQLite, which is mainly used as an in-memory mock/test database, and PostgreSQL, which is the preferred production database.
+Although the Knex library supports a number of databases, `Kerberus Dashboard` is currently being tested primarily against two of them: SQLite, which is mainly used as an in-memory mock/test database, and PostgreSQL, which is the preferred production database.
 
 ## Requirements
 
-In order to correctly install the platform there are some requirements:
+In order to correctly install the platform, some requirements must be installed on your system:
 
 1. [NodeJS](https://nodejs.org/en/)
-2. [YARN](https://nodejs.org/en/)
+2. [YARN](https://yarnpkg.com/)
 3. [Docker](https://docs.docker.com/get-docker/)
 
-## Docker image
 
-You can build your customized docker image:
+## Installation
+
+### Obtaining the Docker image
+
+The official Docker image can be downloaded with the following command:
+
+```bash
+docker pull ghcr.io/projectkerberus/kerberus-dashboard:latest
+```
+
+In case you feel brave, you can build your customized Docker image as follows:
 
 ```bash
 yarn install
@@ -74,25 +78,16 @@ yarn tsc
 yarn build
 yarn build-image
 ```
-
-Or use an official version:
-
-```bash
-docker pull ghcr.io/projectkerberus/kerberus-dashboard:latest
-```
-
-## Installation
-
 ### Prepare namespace and secrets
 
 ```bash
-KERBERUS_DASHBOARD_NS=kerberus-dashboard-ns2
+KERBERUS_DASHBOARD_NS=kerberus-dashboard-ns
 
 kubectl create namespace $KERBERUS_DASHBOARD_NS
 kubectl config set-context --current --namespace=$KERBERUS_DASHBOARD_NS
 ```
 
-In case you ar using custom image, a secre named `regcred` is needed for imagePullSecret spec of the Kubernetes manifest:
+In case you are using a custom Docker image, a secret named `regcred` is needed for the `imagePullSecret` spec of the Kubernetes manifest. You can create it as follows:
 
 ```bash
 kubectl create secret docker-registry regcred 
@@ -102,14 +97,14 @@ kubectl create secret docker-registry regcred
     --docker-email=<user_mail>
 ```
 
-And set mandatory environment variables to connect the dashboard with:
+Furthermore, some mandatory environment variables must be set to allow the dashboard to communicate with different components. In particular, the dashboard must be able to talk with:
 
-* Kubernetes cluster: where deploy every service/resource
+* the Kubernetes cluster: where services and resources can be deployed
 * ArgoCD: for GitOps pipelines. [Here](https://argoproj.github.io/argo-cd/user-guide/commands/argocd_account_generate-token/) you can find how to generate the token
-* GitHub account: where manage repositories that contain services/resources definition. [Here](https://roadie.io/blog/github-auth-backstage/) how to configure it
+* your GitHub account: where repositories that contain definitions for services/resources are managed. You can follow [these instructions](https://roadie.io/blog/github-auth-backstage/) in order to configure it
 
 ```bash
-k create secret generic kerberus-dashboard-creds 
+kubectl create secret generic kerberus-dashboard-creds 
     --from-literal AUTH_GITHUB_CLIENT_ID=... 
     --from-literal AUTH_GITHUB_CLIENT_SECRET=... 
     --from-literal GITHUB_TOKEN=... 

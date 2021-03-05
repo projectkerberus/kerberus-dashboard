@@ -1,6 +1,6 @@
 apiVersion: v2
 name: kerberus-dashboard
-description: A Helm chart for Kubernetes
+description: Kerberus Dashboard provides a GUI for the self-service concept provided by Kerberus
 
 # A chart can be either an 'application' or a 'library' chart.
 #

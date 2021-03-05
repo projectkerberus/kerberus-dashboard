@@ -83,13 +83,38 @@ docker pull ghcr.io/projectkerberus/kerberus-dashboard:latest
 
 ## Installation
 
-### Prepare namespace
+### Prepare namespace and secrets
 
 ```bash
 KERBERUS_DASHBOARD_NS=kerberus-dashboard-ns2
 
 kubectl create namespace $KERBERUS_DASHBOARD_NS
 kubectl config set-context --current --namespace=$KERBERUS_DASHBOARD_NS
+```
+
+In case you ar using custom image, a secre named `regcred` is needed for imagePullSecret spec of the Kubernetes manifest:
+
+```bash
+kubectl create secret docker-registry regcred 
+    --docker-server=<registry_url> 
+    --docker-username=<registry_username> 
+    --docker-password=<registry_password> 
+    --docker-email=<user_mail>
+```
+
+And set mandatory environment variables to connect the dashboard with:
+
+* Kubernetes cluster: where deploy every service/resource
+* ArgoCD: for GitOps pipelines. [Here](https://argoproj.github.io/argo-cd/user-guide/commands/argocd_account_generate-token/) you can find how to generate the token
+* GitHub account: where manage repositories that contain services/resources definition. [Here](https://roadie.io/blog/github-auth-backstage/) how to configure it
+
+```bash
+k create secret generic kerberus-dashboard-creds 
+    --from-literal AUTH_GITHUB_CLIENT_ID=... 
+    --from-literal AUTH_GITHUB_CLIENT_SECRET=... 
+    --from-literal GITHUB_TOKEN=... 
+    --from-literal ARGOCD_AUTH_TOKEN=... 
+    --from-literal K8S_KERBERUS_TOKEN=...
 ```
 
 ### Install Helm chart

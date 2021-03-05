@@ -12,6 +12,7 @@ app:
     tag: "latest"
 
   imagePullSecrets:
+    # Comment this line if you are using a public docker image
     - name: regcred
   nameOverride: ""
   fullnameOverride: ""

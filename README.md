@@ -120,6 +120,12 @@ From the `kubernetes/kerberus-dashboard/values.yaml` folder, after customizing `
 helm install -f values.yaml kerberus-dashboard ./
 ```
 
+Or download the official repository:
+```bash
+helm repo add project-kerberus https://projectkerberus.github.io/kerberus-dashboard/
+helm install -f values.yaml project-kerberus/kerberus-dashboard
+```
+
 ## Upgrade
 
 From the `kubernetes/kerberus-dashboard/values.yaml` folder:

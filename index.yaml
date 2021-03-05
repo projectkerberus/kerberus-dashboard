@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  kerberus-dashboard:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2021-03-05T10:58:29.485015989Z"
+    description: A Helm chart for Kubernetes
+    digest: 98ecf51676dd47f43e79c83c63f3c914f55b51cf41640faf2c3463de9d6bcdb6
+    name: kerberus-dashboard
+    type: application
+    urls:
+    - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.0/kerberus-dashboard-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-03-05T10:58:29.485023089Z"

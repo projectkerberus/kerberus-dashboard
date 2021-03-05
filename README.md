@@ -1,5 +1,7 @@
 # Kerberus Dashboard
 
+[![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml)
+
 ## Introduction
 
 `Kerberus Dashboard` provides a GUI for the self-service concept provided by Kerberus, including:
@@ -118,6 +120,12 @@ From the `kubernetes/kerberus-dashboard/values.yaml` folder, after customizing `
 
 ```bash
 helm install -f values.yaml kerberus-dashboard ./
+```
+
+Or download the official repository:
+```bash
+helm repo add project-kerberus https://projectkerberus.github.io/kerberus-dashboard/
+helm install -f values.yaml project-kerberus/kerberus-dashboard
 ```
 
 ## Upgrade

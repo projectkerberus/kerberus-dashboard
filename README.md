@@ -1,5 +1,7 @@
 # Kerberus Dashboard
 
+[![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml)
+
 ## Introduction
 
 `Kerberus Dashboard` provides a GUI for the self-service concept provided by Kerberus, including:

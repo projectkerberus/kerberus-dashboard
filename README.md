@@ -112,9 +112,9 @@ kubectl create secret generic kerberus-dashboard-creds
     --from-literal K8S_KERBERUS_TOKEN=...
 ```
 
-### Install Helm chart
+## Install Helm chart
 
-From folder `kubernetes/kerberus-dashboard/values.yaml`, after customizing `values.yaml`:
+From the `kubernetes/kerberus-dashboard/values.yaml` folder, after customizing `values.yaml`:
 
 ```bash
 helm install -f values.yaml kerberus-dashboard ./
@@ -122,7 +122,7 @@ helm install -f values.yaml kerberus-dashboard ./
 
 ## Upgrade
 
-From folder `kubernetes/kerberus-dashboard/values.yaml`:
+From the `kubernetes/kerberus-dashboard/values.yaml` folder:
 
 ```bash
 helm upgrade -f values.yaml kerberus-dashboard ./

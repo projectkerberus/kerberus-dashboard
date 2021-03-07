@@ -3,6 +3,14 @@ name: kerberus-dashboard
 description: Kerberus Dashboard provides a GUI for the self-service concept provided by Kerberus
 icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
 
+maintainers:
+  - name: banshee86vr
+    url: https://github.com/banshee86vr
+  - name: idallaserra
+    url: https://github.com/idallaserra
+  - name: braghettos
+    url: https://github.com/braghettos
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives

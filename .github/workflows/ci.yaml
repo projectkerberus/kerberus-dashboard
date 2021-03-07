@@ -27,29 +27,33 @@ jobs:
       - name: Run helm-docs
         run: .github/helm-docs.sh
 
-  # kubeval-chart:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - lint-chart
-  #     - lint-docs
-  #   strategy:
-  #     matrix:
-  #       k8s:
-  #         - v1.12.10
-  #         - v1.13.12
-  #         - v1.14.10
-  #         - v1.15.11
-  #         - v1.17.17
-  #         - v1.18.15
-  #         - v1.19.7
-  #         - v1.20.2
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v1
-  #     - name: Run kubeval
-  #       env:
-  #         KUBERNETES_VERSION: ${{ matrix.k8s }}
-  #       run: .github/kubeval.sh
+  kubeval-chart:
+    runs-on: ubuntu-latest
+    needs:
+      - lint-chart
+      - lint-docs
+    strategy:
+      matrix:
+        k8s:
+          - v1.12.10
+          - v1.13.12
+          - v1.14.10
+          - v1.15.11
+          - v1.17.17
+          - v1.18.15
+          - v1.19.7
+          - v1.20.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # - name: Run kubeval
+      #   env:
+      #     KUBERNETES_VERSION: ${{ matrix.k8s }}
+      #   run: .github/kubeval.sh
+      - name: Run kubeval
+        uses: instrumenta/kubeval-action@master
+        with:
+          version: ${{ matrix.k8s }}
   
   install-chart:
     name: install-chart
@@ -58,12 +62,24 @@ jobs:
       - lint-chart
       - lint-docs
       - kubeval-chart
+    strategy:
+      matrix:
+        k8s:
+          - v1.12.10
+          - v1.13.12
+          - v1.14.10
+          - v1.15.11
+          - v1.17.17
+          - v1.18.15
+          - v1.19.7
+          - v1.20.2
     steps:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@v1.1.0
-
+        uses: helm/kind-action@master
+        with:
+          node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
         uses: helm/chart-testing-action@master
         with:

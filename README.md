@@ -1,3 +1,5 @@
+<img src="docs/media/square_black_horizontal.svg" width="400">
+
 # Kerberus Dashboard
 
 [![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml)

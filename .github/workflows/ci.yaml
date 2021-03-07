@@ -63,10 +63,10 @@ jobs:
       #     KUBERNETES_VERSION: ${{ matrix.k8s }}
       #   run: .github/kubeval.sh
       - name: Run kubeval
-        uses: instrumenta/kubeval-action@master
+        uses: desaintmartin/helm-kubeval-action@master
         with:
+          path: ./charts
           version: ${{ matrix.k8s }}
-          files: charts/
   
   install-chart:
     name: install-chart

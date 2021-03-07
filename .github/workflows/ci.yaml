@@ -89,8 +89,10 @@ jobs:
         uses: helm/kind-action@master
         with:
           node_image: kindest/node:${{ matrix.k8s }}
-      - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@master
+      - uses: actions/setup-python@v2
         with:
-          command: install
-          config: .github/ct.yaml
+          python-version: 3.7
+      - name: Setup chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+      - name: Run chart-testing (install)
+        run: ct install --all

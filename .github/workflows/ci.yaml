@@ -1,9 +1,9 @@
 name: Lint and Test Charts
 
-on:
-  pull_request:
-    paths:
-      - 'charts/**'
+on: push
+  # pull_request:
+  #   paths:
+  #     - 'charts/**'
 
 jobs:
 
@@ -11,12 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
-      - name: Run chart-testing (lint)
-        uses: helm/chart-testing-action@master
+        uses: actions/checkout@v2
         with:
-          command: lint
-          config: .github/ct.yaml
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.0
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+
+      - name: Run chart-testing (lint)
+        run: ct lint --all
 
   lint-docs:
     runs-on: ubuntu-latest
@@ -27,16 +39,43 @@ jobs:
       - name: Run helm-docs
         run: .github/helm-docs.sh
 
-  # kubeval-chart:
+  kubeval-chart:
+    runs-on: ubuntu-latest
+    needs:
+      - lint-chart
+      - lint-docs
+    strategy:
+      matrix:
+        k8s:
+          - v1.14.10
+          - v1.15.11
+          - v1.17.17
+          - v1.18.15
+          - v1.19.7
+          - v1.20.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # - name: Run kubeval
+      #   env:
+      #     KUBERNETES_VERSION: ${{ matrix.k8s }}
+      #   run: .github/kubeval.sh
+      - name: Run kubeval
+        uses: desaintmartin/helm-kubeval-action@master
+        with:
+          path: ./charts
+          version: ${{ matrix.k8s }}
+  
+  # install-chart:
+  #   name: install-chart
   #   runs-on: ubuntu-latest
   #   needs:
   #     - lint-chart
   #     - lint-docs
+  #     - kubeval-chart
   #   strategy:
   #     matrix:
   #       k8s:
-  #         - v1.12.10
-  #         - v1.13.12
   #         - v1.14.10
   #         - v1.15.11
   #         - v1.17.17
@@ -46,26 +85,14 @@ jobs:
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v1
-  #     - name: Run kubeval
-  #       env:
-  #         KUBERNETES_VERSION: ${{ matrix.k8s }}
-  #       run: .github/kubeval.sh
-  
-  install-chart:
-    name: install-chart
-    runs-on: ubuntu-latest
-    needs:
-      - lint-chart
-      - lint-docs
-      - kubeval-chart
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@v1.1.0
-
-      - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@master
-        with:
-          command: install
-          config: .github/ct.yaml
+  #     - name: Create kind ${{ matrix.k8s }} cluster
+  #       uses: helm/kind-action@master
+  #       with:
+  #         node_image: kindest/node:${{ matrix.k8s }}
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.7
+  #     - name: Setup chart-testing
+  #       uses: helm/chart-testing-action@v2.0.1
+  #     - name: Run chart-testing (install)
+  #       run: ct install --all

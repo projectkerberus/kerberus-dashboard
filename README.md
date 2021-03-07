@@ -2,8 +2,7 @@
 
 # Kerberus Dashboard
 
-[![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml)
-[![Lint and Test Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml/badge.svg)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml)
+[![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml) [![Lint and Test Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml/badge.svg)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml)
 
 ## Introduction
 

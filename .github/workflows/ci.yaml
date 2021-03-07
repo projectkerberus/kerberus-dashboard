@@ -54,6 +54,7 @@ jobs:
         uses: instrumenta/kubeval-action@master
         with:
           version: ${{ matrix.k8s }}
+          files: 'charts/**'
   
   install-chart:
     name: install-chart

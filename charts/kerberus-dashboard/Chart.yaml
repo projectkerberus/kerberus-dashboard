@@ -1,6 +1,7 @@
 apiVersion: v2
 name: kerberus-dashboard
 description: Kerberus Dashboard provides a GUI for the self-service concept provided by Kerberus
+icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
 
 # A chart can be either an 'application' or a 'library' chart.
 #

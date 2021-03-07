@@ -11,8 +11,7 @@ app:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 
-  imagePullSecrets:
-    - name: regcred
+  imagePullSecrets: {}
 
   imageCredentials:
     registry: ghcr.io/

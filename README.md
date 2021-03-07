@@ -1,3 +1,5 @@
+<img src="docs/media/square_black_horizontal.svg" width="400">
+
 # Kerberus Dashboard
 
 ## Introduction

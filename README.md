@@ -82,38 +82,25 @@ yarn tsc
 yarn build
 yarn build-image
 ```
+
 ### Prepare namespace and secrets
 
-```bash
-KERBERUS_DASHBOARD_NS=kerberus-dashboard-ns
-
-kubectl create namespace $KERBERUS_DASHBOARD_NS
-kubectl config set-context --current --namespace=$KERBERUS_DASHBOARD_NS
-```
-
-In case you are using a custom Docker image, a secret named `regcred` is needed for the `imagePullSecret` spec of the Kubernetes manifest. You can create it as follows:
-
-```bash
-kubectl create secret docker-registry regcred 
-    --docker-server=<registry_url> 
-    --docker-username=<registry_username> 
-    --docker-password=<registry_password> 
-    --docker-email=<user_mail>
-```
-
-Furthermore, some mandatory environment variables must be set to allow the dashboard to communicate with different components. In particular, the dashboard must be able to talk with:
+Some mandatory environment variables must be set to allow the dashboard to communicate with different components. In particular, the dashboard must be able to talk with:
 
 * the Kubernetes cluster: where services and resources can be deployed
 * ArgoCD: for GitOps pipelines. [Here](https://argoproj.github.io/argo-cd/user-guide/commands/argocd_account_generate-token/) you can find how to generate the token
 * your GitHub account: where repositories that contain definitions for services/resources are managed. You can follow [these instructions](https://roadie.io/blog/github-auth-backstage/) in order to configure it
 
-```bash
-kubectl create secret generic kerberus-dashboard-creds 
-    --from-literal AUTH_GITHUB_CLIENT_ID=... 
-    --from-literal AUTH_GITHUB_CLIENT_SECRET=... 
-    --from-literal GITHUB_TOKEN=... 
-    --from-literal ARGOCD_AUTH_TOKEN=... 
-    --from-literal K8S_KERBERUS_TOKEN=...
+You can set these environment variables customizing the configuration file `values.yaml`:
+
+```yaml
+app:
+  env:
+    argo_token: ...
+    github_client_id: ...
+    github_client_secret: ...
+    github_token: ...
+    k8s_cluster_token: ...
 ```
 
 ## Install Helm chart

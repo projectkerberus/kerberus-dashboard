@@ -12,8 +12,7 @@ backend:
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: 
-      $env: BASE_URL
+    origin: {{ .Values.app.config.baseUrl }}
     methods: [GET, POST, PUT, DELETE]
     credentials: true
   database:

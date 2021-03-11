@@ -38,15 +38,15 @@ Create a client secret:
 Export `Client ID` and `Client secret`:
 
 ```bash
-AUTH_GITHUB_CLIENT_ID=...
-AUTH_GITHUB_CLIENT_SECRET=...
+➜ AUTH_GITHUB_CLIENT_ID=...
+➜ AUTH_GITHUB_CLIENT_SECRET=...
 ```
 
 ### Start Minikube
 
 ```bash
-minikube start
-minikube addons enable ingress
+➜ minikube start
+➜ minikube addons enable ingress
 ```
 
 ### Configure ArgoCD
@@ -75,30 +75,30 @@ server:
 ```
 
 ```bash
-helm repo add argo https://argoproj.github.io/argo-helm
-helm install -f values-argo.yaml argo/argo-cd --generate-name --namespace=argocd --create-namespace
+➜ helm repo add argo https://argoproj.github.io/argo-helm
+➜ helm install -f values-argo.yaml argo/argo-cd --generate-name --namespace=argocd --create-namespace
 
-ARGO_ADMIN_PASSWORD=$(kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2)
+➜ ARGO_ADMIN_PASSWORD=$(kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2)
 ```
 
 In order to generate token you have to retrieve a valid beare token:
 
 ```bash
-ARGO_AUTH_BEARER_TOKEN=$(curl -k --location --request POST 'https://argocd.demo.io/api/v1/session' \
+➜ ARGO_AUTH_BEARER_TOKEN=$(curl -k --location --request POST 'https://argocd.demo.io/api/v1/session' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "admin",
     "password": "'"$ARGO_ADMIN_PASSWORD"'"
 }' 2>/dev/null | jq -r '.token')
 
-ARGO_SERVICE_ACCOUNT_TOKEN=$(curl -k --location --request POST 'https://argocd.demo.io/api/v1/account/kerberus-dashboard/token' \
+➜ ARGO_SERVICE_ACCOUNT_TOKEN=$(curl -k --location --request POST 'https://argocd.demo.io/api/v1/account/kerberus-dashboard/token' \
 --header "Authorization: Bearer $AUTH_BEARER_TOKEN" 2>/dev/null | jq -r '.token')
 ```
 
 ### Create service account for Kerberus Dashboard on K8S cluster
 
 ```bash
-cat <<EOF | kubectl apply -f -
+➜ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -124,14 +124,14 @@ subjects:
     namespace: kerberus-dashboard
 EOF
 
-K8S_SERVICE_ACCOUNT_SECRET=$(k get serviceaccount -n kerberus-dashboard kerberus-admin -o jsonpath="{.secrets[0].name}")
-K8S_SERVICE_ACCOUNT_TOKEN=$(kubectl get secret -n kerberus-dashboard $K8S_SERVICE_ACCOUNT_SECRET -o jsonpath='{.data.token}' | base64 --decode)
+➜ K8S_SERVICE_ACCOUNT_SECRET=$(k get serviceaccount -n kerberus-dashboard kerberus-admin -o jsonpath="{.secrets[0].name}")
+➜ K8S_SERVICE_ACCOUNT_TOKEN=$(kubectl get secret -n kerberus-dashboard $K8S_SERVICE_ACCOUNT_SECRET -o jsonpath='{.data.token}' | base64 --decode)
 ```
 
 ### Configure Kerberus dashboard
 
 ```bash
-wget -O values-dashboard.yaml https://github.com/projectkerberus/kerberus-dashboard/raw/main/charts/kerberus-dashboard/values.minikube.yaml
+➜ wget -O values-dashboard.yaml https://github.com/projectkerberus/kerberus-dashboard/raw/main/charts/kerberus-dashboard/values.minikube.yaml
 ```
 
 Edit `values-dashboard.yaml` setting values for GitHub authentication:
@@ -149,8 +149,8 @@ app:
 and install the Helm chart setting the default storage class to the default one provided by Minikube:
 
 ```bash
-helm repo add project-kerberus https://projectkerberus.github.io/kerberus-dashboard/
-helm install -f values-dashboard.yaml project-kerberus/kerberus-dashboard --generate-name --namespace=kerberus-dashboard --create-namespace
+➜ helm repo add project-kerberus https://projectkerberus.github.io/kerberus-dashboard/
+➜ helm install -f values-dashboard.yaml project-kerberus/kerberus-dashboard --generate-name --namespace=kerberus-dashboard --create-namespace
 ```
 
 The ingress defined during the installation use a FQDN `kerberus-dashboard.demo.io`. So, add a line for this resolution to you `/etc/hosts` file:

@@ -145,8 +145,7 @@ server:
     accounts.kerberus-dashboard.enabled: "true"
 
   rbacConfig:
-    policy.csv: |
-      p, user:kerberus-dashboard, *, *, */*, allow
+    policy.default: role:admin
 ```
 
 ```bash
@@ -300,3 +299,23 @@ The dashboard and ArgoCD Frontend will be available at:
 
 * <https://kerberus-dashboard.demo.io>
 * <https://argocd.demo.io>
+
+### Test with gcp template
+
+1. Import sample template:
+  ![Import template](media/template_import_1.png)
+  ![Import template](media/template_import_2.png)
+  ![Import template](media/template_import_3.png)
+2. Create component based on GCP template:
+  ![Create component](media/kerberus-demo-1.png)
+  ![Create component](media/kerberus-demo-2.png)
+  ![Create component](media/kerberus-demo-3.png)
+3. Check the application defined on ArgoCD:
+   In case of unavailability of public DNS, execute manually the API call performed by the GitHub action in order to create the application on ArgoCD:
+  ![ArgoCD](media/argo_1.png)
+  ![ArgoCD](media/argo_2.png)
+  ![ArgoCD](media/argo_3.png)
+4. Check resources on GCP project:
+  ![GCP resources](media/gcp_1.png)
+  ![GCP resources](media/gcp_2.png)
+  ![GCP resources](media/gcp_3.png)

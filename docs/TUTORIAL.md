@@ -21,7 +21,7 @@ This tutorial demonstrates the basic steps to install and configure the `Kerberu
 
 ## Installation of Kerberus dashboard
 
-### OAuth application on GitHub
+### 1. OAuth application on GitHub
 
 To create an OAuth app for local development, visit [your OAuth Apps settings page on GitHub](https://github.com/settings/developers). Click the “New OAuth App” button and you’ll see a form you have to fill out.
 
@@ -46,7 +46,7 @@ Export `Client ID` and `Client secret`:
 ➜ AUTH_GITHUB_CLIENT_SECRET=...
 ```
 
-### Start Minikube
+### 2. Start Minikube
 
 ```bash
 ➜ minikube start
@@ -65,7 +65,7 @@ Export `Client ID` and `Client secret`:
 ➜ kubectl config view --minify > /tmp/kubeconfig-kerberusdemo
 ```
 
-### Install Crossplane and GCP Provider Config
+### 3. Install Crossplane and GCP Provider Config
 
 Clone `kerberus-platform` repository:
 
@@ -124,7 +124,7 @@ Confirming on form:
 
 And [create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) called `kerberusdemo`.
 
-### Configure ArgoCD
+### 4. Configure ArgoCD
 
 Create a `values.yaml` file with the content:
 
@@ -220,7 +220,7 @@ In order to generate token you have to retrieve a valid bearer token:
 --header "Authorization: Bearer $ARGO_AUTH_BEARER_TOKEN" 2>/dev/null | jq -r '.token')
 ```
 
-### Create service account for Kerberus Dashboard on K8S cluster
+### 5. Create service account for Kerberus Dashboard on K8S cluster
 
 ```bash
 ➜ cat <<EOF | kubectl apply -f -
@@ -253,7 +253,7 @@ EOF
 ➜ K8S_SERVICE_ACCOUNT_TOKEN=$(kubectl get secret -n kerberus-dashboard $K8S_SERVICE_ACCOUNT_SECRET -o jsonpath='{.data.token}' | base64 --decode)
 ```
 
-### Configure Kerberus dashboard
+### 6. Configure Kerberus dashboard
 
 ```bash
 ➜ wget -O values-dashboard.yaml https://github.com/projectkerberus/kerberus-dashboard/raw/main/charts/kerberus-dashboard/values.minikube.yaml
@@ -300,22 +300,22 @@ The dashboard and ArgoCD Frontend will be available at:
 * <https://kerberus-dashboard.demo.io>
 * <https://argocd.demo.io>
 
-### Test with gcp template
+### 7. Test with gcp template
 
-1. Import sample template:
+Import sample template:
   ![Import template](media/template_import_1.png)
   ![Import template](media/template_import_2.png)
   ![Import template](media/template_import_3.png)
-2. Create component based on GCP template:
+Create component based on GCP template:
   ![Create component](media/kerberus-demo-1.png)
   ![Create component](media/kerberus-demo-2.png)
   ![Create component](media/kerberus-demo-3.png)
-3. Check the application defined on ArgoCD:
+Check the application defined on ArgoCD:
    In case of unavailability of public DNS, execute manually the API call performed by the GitHub action in order to create the application on ArgoCD:
   ![ArgoCD](media/argo_1.png)
   ![ArgoCD](media/argo_2.png)
   ![ArgoCD](media/argo_3.png)
-4. Check resources on GCP project:
+Check resources on GCP project:
   ![GCP resources](media/gcp_1.png)
   ![GCP resources](media/gcp_2.png)
   ![GCP resources](media/gcp_3.png)

@@ -15,9 +15,10 @@ This tutorial demonstrates the basic steps to install and configure the `Kerberu
 * [Helm](https://helm.sh/docs/intro/install/)
 * Creation of OAuth application on GitHub
 * [Terraform OSS](https://www.terraform.io/downloads.html) (tested with version v0.14.4)
-* [kubectl CLI](https://kubernetes.io/docs/reference/kubectl/)
-* [gcloud CLI](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login)
+* [kubectl CLI](https://kubernetes.io/docs/tasks/tools/)
+* [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 * [Crossplane CLI](https://crossplane.io/docs/v1.0/getting-started/install-configure.html#install-crossplane-cli)
+* An "upgraded" billing account on Google Cloud. Using the Google Cloud's free signing bonus without also upgrading your billing account will lead this tutorial to failure. Note that the free credit will be used first even if you upgrade your account to a non-free one.
 
 ## Installation of Kerberus dashboard
 
@@ -112,6 +113,12 @@ ARGOCD_HOSTNAME = "argocd.demo.io"
 Once [gcloud CLI is installed](https://cloud.google.com/sdk/docs/install), login with application-default method:
 
 ```bash
+➜ gcloud auth login
+Your browser has been opened to visit:
+
+    https://accounts.google.com/o/oauth2/auth?...
+
+
 ➜ gcloud auth application-default login
 Your browser has been opened to visit:
 
@@ -122,32 +129,27 @@ Confirming on form:
 
 ![GCloud authentication](media/gcloud_auth_1.png)
 
-And [create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) called `kerberusdemo`.
+And [create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) called `kerberusdemo`. 
 
-### 4. Configure ArgoCD
-
-Create a `values.yaml` file with the content:
-
-```yaml
-server:
-  extraArgs:
-    - --insecure
-
-  ingress:
-    enabled: true
-    
-    hosts:
-      - argocd.demo.io
-  
-  config:
-    url: https://argocd.demo.io
-    accounts.kerberus-dashboard: apiKey
-    accounts.kerberus-dashboard.enabled: "true"
-
-  rbacConfig:
-    policy.default: role:admin
+```bash
+➜ gcloud projects create kerberusdemo
 ```
 
+Set `kerberusdemo` as your current project.
+```bash
+➜ gcloud config set project kerberusdemo
+```
+
+
+Finally, link the project and your billing account
+```bash
+➜ gcloud alpha billing accounts list
+# copy the Account ID from here
+
+➜ gcloud alpha billing projects link kerberusdemo --billing-account ACCOUNT_ID_FROM_PREVIOUS_COMMAND
+```
+
+### 4. Run the Terraform script
 ```bash
 ➜ terraform init
 
@@ -189,7 +191,12 @@ Outputs:
 argocd = https://argocd.demo.io
 ```
 
-Add to `/etc/hosts` the resolution of the FQDN obtained for ArgoCD:
+Get the Minikube cluster's IP: 
+```bash
+minikube ip
+```
+
+Add to `/etc/hosts` the resolution of the FQDN obtained for ArgoCD, pointing at the IP obtained from Minikube:
 
 ```text
 ##
@@ -202,7 +209,7 @@ Add to `/etc/hosts` the resolution of the FQDN obtained for ArgoCD:
 255.255.255.255 broadcasthost
 ::1             localhost
 
-192.168.99.117  argocd.demo.io
+MINIKUBE_IP  argocd.demo.io
 ```
 
 In order to generate token you have to retrieve a valid bearer token:
@@ -249,7 +256,7 @@ subjects:
     namespace: kerberus-dashboard
 EOF
 
-➜ K8S_SERVICE_ACCOUNT_SECRET=$(k get serviceaccount -n kerberus-dashboard kerberus-admin -o jsonpath="{.secrets[0].name}")
+➜ K8S_SERVICE_ACCOUNT_SECRET=$(kubectl get serviceaccount -n kerberus-dashboard kerberus-admin -o jsonpath="{.secrets[0].name}")
 ➜ K8S_SERVICE_ACCOUNT_TOKEN=$(kubectl get secret -n kerberus-dashboard $K8S_SERVICE_ACCOUNT_SECRET -o jsonpath='{.data.token}' | base64 --decode)
 ```
 
@@ -259,7 +266,23 @@ EOF
 ➜ wget -O values-dashboard.yaml https://github.com/projectkerberus/kerberus-dashboard/raw/main/charts/kerberus-dashboard/values.minikube.yaml
 ```
 
+#### Create a token for ArgoCD
+* Open https://argocd.demo.io in your browser
+* Log in using the following credentials:
+  * username: admin
+  * password: full name of the `argocd-server-...` pod, which you can find by running `kubectl get pods -n argo`
+* On the left, click on the gear (*manage your repositories, projects, settings*)
+* Click on Accounts
+* Click on `kerberus-dashboard`
+* Under "Tokens", click on "Generate New"
+
+#### Create a Personal Access Token for GitHub
+* Open https://github.com/settings/tokens in your browser
+* Click on "Generate new token"
+* Grant all permissions
+
 Edit `values-dashboard.yaml` setting values for GitHub authentication:
+
 
 ```yaml
 app:
@@ -267,7 +290,7 @@ app:
     argo_token: ...             # ARGO_SERVICE_ACCOUNT_TOKEN
     github_client_id: ...       # AUTH_GITHUB_CLIENT_ID
     github_client_secret: ...   # AUTH_GITHUB_CLIENT_SECRET
-    github_token: ...           # Valid access token to GitHub account
+    github_token: ...           # GitHub token you just created
     k8s_cluster_token: ...      # K8S_SERVICE_ACCOUNT_TOKEN
 ```
 
@@ -291,8 +314,8 @@ The ingress defined during the installation uses the FQDN `kerberus-dashboard.de
 255.255.255.255 broadcasthost
 ::1             localhost
 
-192.168.99.117  argocd.demo.io
-192.168.99.117  kerberus-dashboard.demo.io
+MINIKUBE_IP  argocd.demo.io
+MINIKUBE_IP  kerberus-dashboard.demo.io
 ```
 
 The dashboard and ArgoCD Frontend will be available at:
@@ -300,7 +323,9 @@ The dashboard and ArgoCD Frontend will be available at:
 * <https://kerberus-dashboard.demo.io>
 * <https://argocd.demo.io>
 
+
 ### 7. Test with gcp template
+The GCP template can be found here: https://github.com/projectkerberus/gcp-stack-template/blob/main/template.yaml
 
 Import sample template:
   ![Import template](media/template_import_1.png)
@@ -311,7 +336,7 @@ Create component based on GCP template:
   ![Create component](media/kerberus-demo-2.png)
   ![Create component](media/kerberus-demo-3.png)
 Check the application defined on ArgoCD:
-   In case of unavailability of public DNS, execute manually the API call performed by the GitHub action in order to create the application on ArgoCD:
+   In case of unavailability of a public DNS (as in our case), manually execute the API call performed by the GitHub action in order to create the application on ArgoCD:
   ![ArgoCD](media/argo_1.png)
   ![ArgoCD](media/argo_2.png)
   ![ArgoCD](media/argo_3.png)

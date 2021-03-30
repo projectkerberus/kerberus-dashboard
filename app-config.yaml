@@ -1,18 +1,18 @@
 app:
-  title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000
+  title: Kerberus Dashboard
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
 
 organization:
-  name: My Company
+  name: Project Kerberus
 
 backend:
-  baseUrl: http://localhost:7000
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
   listen:
     port: 7000
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: http://localhost:3000
+    origin: https://kerberus-dashboard.projectx.kiratech.biz/
     methods: [GET, POST, PUT, DELETE]
     credentials: true
   # config options: https://node-postgres.com/api/client

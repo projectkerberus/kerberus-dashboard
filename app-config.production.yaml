@@ -1,8 +1,8 @@
 app:
   # Should be the same as backend.baseUrl when using the `app-backend` plugin
-  baseUrl: http://localhost:7000
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
 
 backend:
-  baseUrl: http://localhost:7000
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
   listen:
     port: 7000

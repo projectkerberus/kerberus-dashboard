@@ -50,6 +50,10 @@ import {
   UserProfileCard,
 } from '@backstage/plugin-org';
 import { EmbeddedDocsRouter as DocsRouter } from '@backstage/plugin-techdocs';
+import {
+  ArgoCDDetailsWidget,
+  isArgocdAvailable
+} from '@roadiehq/backstage-plugin-argo-cd';
 
 
 const CICDSwitcher = ({ entity }: { entity: Entity }) => {
@@ -83,6 +87,11 @@ const OverviewContent = ({ entity }: { entity: Entity }) => (
     <Grid item md={6}>
       <AboutCard entity={entity} variant="gridItem" />
     </Grid>
+    {isArgocdAvailable(entity) && (
+      <Grid item md={6}>
+        <ArgoCDDetailsWidget entity={entity} />
+      </Grid>
+    )}
   </Grid>
 );
 

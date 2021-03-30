@@ -1,0 +1,23 @@
+apiVersion: v2
+name: kerberus-dashboard
+description: Kerberus Dashboard provides a GUI for the self-service concept provided by Kerberus
+type: application
+icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
+
+version: 0.1.1
+
+appVersion: v0.1.1-alpha.23
+
+dependencies:
+  - name: postgresql
+    condition: postgresql.enabled
+    version: 9.4.1
+    repository: https://charts.bitnami.com/bitnami
+
+maintainers:
+  - name: banshee86vr
+    url: https://github.com/banshee86vr
+  - name: idallaserra
+    url: https://github.com/idallaserra
+  - name: braghettos
+    url: https://github.com/braghettos

@@ -213,3 +213,6 @@ temp/
 # if you are NOT using Zero-installs, then:
 # comment the following lines
 !.yarn/cache
+
+# Values file for Demo instance
+values.demo.yaml

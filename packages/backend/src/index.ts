@@ -18,7 +18,6 @@ import {
   UrlReaders,
 } from '@backstage/backend-common';
 import { Config } from '@backstage/config';
-import app from './plugins/app';
 import auth from './plugins/auth';
 import catalog from './plugins/catalog';
 import scaffolder from './plugins/scaffolder';
@@ -54,7 +53,6 @@ async function main() {
   const authEnv = useHotMemoize(module, () => createEnv('auth'));
   const proxyEnv = useHotMemoize(module, () => createEnv('proxy'));
   const techdocsEnv = useHotMemoize(module, () => createEnv('techdocs'));
-  const appEnv = useHotMemoize(module, () => createEnv('app'));
 
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
@@ -66,8 +64,7 @@ async function main() {
 
   const service = createServiceBuilder(module)
     .loadConfig(config)
-    .addRouter('/api', apiRouter)
-    .addRouter('', await app(appEnv));
+    .addRouter('/api', apiRouter);
 
   await service.start().catch(err => {
     console.log(err);

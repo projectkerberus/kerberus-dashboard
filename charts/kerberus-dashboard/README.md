@@ -1,4 +1,4 @@
-# Kerberus Dashboard demo helm charts
+# Kerberus Dashboard demo Helm charts
 
 This folder contains Helm charts that can easily create a Kubernetes deployment of a demo Kerberus Dashboard app.
 

@@ -1,30 +1,36 @@
 app:
   title: Kerberus Dashboard
-  baseUrl: https://kerberus-dashboard.example.com
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
 
 organization:
   name: Project Kerberus
 
 backend:
-  baseUrl: https://kerberus-dashboard.example.com
+  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
   listen:
     port: 7000
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: 
-      $env: BASE_URL
+    origin: https://kerberus-dashboard.projectx.kiratech.biz/
     methods: [GET, POST, PUT, DELETE]
     credentials: true
+  # config options: https://node-postgres.com/api/client
   database:
     client: pg
     connection:
-      host: 
+      host:
         $env: POSTGRES_HOST
-      user: 
+      port:
+        $env: POSTGRES_PORT
+      user:
         $env: POSTGRES_USER
-      password: 
-        $env: POSTGRES_PWD
+      password:
+        $env: POSTGRES_PASSWORD
+      # https://node-postgres.com/features/ssl
+      #ssl: require # see https://www.postgresql.org/docs/current/libpq-ssl.html Table 33.1. SSL Mode Descriptions (e.g. require)
+        #ca: # if you have a CA file and want to verify it you can uncomment this section
+        #  $file: <file-path>/ca/server.crt
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -39,15 +45,9 @@ integrations:
     #     $env: GHE_TOKEN
 
 proxy:
-  '/argocd/api':
-    # url to the api of your hosted argoCD instance
-    target: https://argocd.example.com/api/v1/
+  '/test':
+    target: 'https://example.com'
     changeOrigin: true
-    # this line is required if your hosted argoCD instance has self-signed certificate
-    secure: false
-    headers:
-      Cookie:
-        $env: ARGOCD_AUTH_TOKEN
 
 # Reference documentation http://backstage.io/docs/features/techdocs/configuration
 # Note: After experimenting with basic setup, use CI/CD to generate docs
@@ -62,15 +62,7 @@ techdocs:
 
 auth:
   # see https://backstage.io/docs/tutorials/quickstart-app-auth to know more about enabling auth providers
-  providers:
-    github:
-      development:
-        clientId:
-          $env: AUTH_GITHUB_CLIENT_ID
-        clientSecret:
-          $env: AUTH_GITHUB_CLIENT_SECRET
-        enterpriseInstanceUrl:
-          $env: AUTH_GITHUB_ENTERPRISE_INSTANCE_URL
+  providers: {}
 
 scaffolder:
   github:
@@ -80,5 +72,44 @@ scaffolder:
 
 catalog:
   rules:
-    - allow: [Component, API, Group, User, Template, Location]
-  locations: []
+    - allow: [Component, System, API, Group, User, Template, Location]
+  locations:
+    # Backstage example components
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-components.yaml
+
+    # Backstage example systems
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-systems.yaml
+
+    # Backstage example APIs
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-apis.yaml
+
+    # Backstage example organization groups
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme/org.yaml
+      rules:
+        - allow: [Group, User]
+
+    # Backstage example templates
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/react-ssr-template/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/springboot-grpc-template/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/create-react-app/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/spotify/cookiecutter-golang/blob/master/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/docs-template/template.yaml
+      rules:
+        - allow: [Template]

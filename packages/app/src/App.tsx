@@ -1,74 +1,88 @@
 import React from 'react';
+import { Navigate, Route } from 'react-router';
 import {
-  createApp,
   AlertDisplay,
-  OAuthRequestDialog,
-  SidebarPage,
+  createApp,
   FlatRoutes,
+  OAuthRequestDialog,
 } from '@backstage/core';
-import { apis } from './apis';
-import * as plugins from './plugins';
-import { AppSidebar } from './sidebar';
-import { Route, Navigate } from 'react-router';
+import { apiDocsPlugin, ApiExplorerPage } from '@backstage/plugin-api-docs';
 import {
-  catalogPlugin,
-  CatalogIndexPage,
   CatalogEntityPage,
+  CatalogIndexPage,
+  catalogPlugin,
 } from '@backstage/plugin-catalog';
-import { Router as DocsRouter } from '@backstage/plugin-techdocs';
 import { CatalogImportPage } from '@backstage/plugin-catalog-import';
-import { Router as TechRadarRouter } from '@backstage/plugin-tech-radar';
-import { SearchPage as SearchRouter } from '@backstage/plugin-search';
-import { Router as SettingsRouter } from '@backstage/plugin-user-settings';
-
+import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
+import { SearchPage } from '@backstage/plugin-search';
+import { TechRadarPage } from '@backstage/plugin-tech-radar';
+import { TechdocsPage } from '@backstage/plugin-techdocs';
+import { UserSettingsPage } from '@backstage/plugin-user-settings';
+import { apis } from './apis';
 import { EntityPage } from './components/catalog/EntityPage';
-import { scaffolderPlugin, ScaffolderPage } from '@backstage/plugin-scaffolder';
+import { Root } from './components/Root';
+import * as plugins from './plugins';
+import { githubAuthApiRef, SignInPage } from '@backstage/core';
 
 const app = createApp({
   apis,
   plugins: Object.values(plugins),
+  components: {
+    SignInPage: props => (
+    <SignInPage
+        {...props}
+        auto
+        provider={{
+        id: 'github-auth-provider',
+        title: 'GitHub',
+        message: 'Kerberus Dashboard Login',
+        apiRef: githubAuthApiRef,
+        }}
+    />
+    ),
+  },
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
       createComponent: scaffolderPlugin.routes.root,
     });
-  }
+    bind(apiDocsPlugin.externalRoutes, {
+      createComponent: scaffolderPlugin.routes.root,
+    });
+  },
 });
 
 const AppProvider = app.getProvider();
 const AppRouter = app.getRouter();
-const deprecatedAppRoutes = app.getRoutes();
+
+const routes = (
+  <FlatRoutes>
+    <Navigate key="/" to="/catalog" />
+    <Route path="/catalog" element={<CatalogIndexPage />} />
+    <Route
+      path="/catalog/:namespace/:kind/:name"
+      element={<CatalogEntityPage />}
+    >
+      <EntityPage />
+    </Route>
+    <Route path="/docs" element={<TechdocsPage />} />
+    <Route path="/create" element={<ScaffolderPage />} />
+    <Route path="/api-docs" element={<ApiExplorerPage />} />
+    <Route
+      path="/tech-radar"
+      element={<TechRadarPage width={1500} height={800} />}
+    />
+    <Route path="/catalog-import" element={<CatalogImportPage />} />
+    <Route path="/search" element={<SearchPage />} />
+    <Route path="/settings" element={<UserSettingsPage />} />
+  </FlatRoutes>
+);
 
 const App = () => (
   <AppProvider>
     <AlertDisplay />
     <OAuthRequestDialog />
     <AppRouter>
-      <SidebarPage>
-        <AppSidebar />
-        <FlatRoutes>
-          <Navigate key="/" to="/catalog" />
-          <Route path="/catalog" element={<CatalogIndexPage />} />
-          <Route
-            path="/catalog/:namespace/:kind/:name"
-            element={<CatalogEntityPage />}
-          >
-            <EntityPage />
-          </Route>
-          <Route path="/docs" element={<DocsRouter />} />
-          <Route path="/create" element={<ScaffolderPage />} />
-          <Route
-            path="/tech-radar"
-            element={<TechRadarRouter width={1500} height={800} />}
-          />
-          <Route path="/catalog-import" element={<CatalogImportPage />} />
-          <Route
-            path="/search"
-            element={<SearchRouter/>}
-          />
-          <Route path="/settings" element={<SettingsRouter />} />
-          {deprecatedAppRoutes}
-        </FlatRoutes>
-      </SidebarPage>
+      <Root>{routes}</Root>
     </AppRouter>
   </AppProvider>
 );

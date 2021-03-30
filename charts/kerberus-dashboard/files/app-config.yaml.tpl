@@ -1,63 +1,58 @@
 app:
-  title: Kerberus Dashboard
-  baseUrl: {{ .Values.app.config.baseUrl }}
+  title: {{ .Values.appConfig.app.title }}
+  baseUrl: {{ .Values.appConfig.app.baseUrl }}
 
 organization:
-  name: Project Kerberus
+  name: {{ .Values.appConfig.organization }}
 
 backend:
-  baseUrl: {{ .Values.app.config.baseUrl }}
+  lighthouseHostname: {{ include "lighthouse.serviceName" . | quote }}
+  baseUrl: {{ .Values.appConfig.backend.baseUrl }}
   listen:
-    port: 7000
+      port: {{ .Values.appConfig.backend.listen.port | default 7000 }}
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: {{ .Values.app.config.baseUrl }}
+    origin: {{ .Values.appConfig.backend.baseUrl }}
     methods: [GET, POST, PUT, DELETE]
     credentials: true
   database:
-    client: pg
+    client: {{ .Values.appConfig.backend.database.client | quote }}
     connection:
-      host: {{ include "kerberus-dashboard.db.host" . }}
-      user: {{ .Values.db.config.user }}
-      password: {{ .Values.db.config.password }}
-  # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
+      host: {{ include "backend.postgresql.host" . | quote }}
+      port: {{ include "backend.postgresql.port" . | quote }}
+      user: {{ include "backend.postgresql.user" . | quote }}
+      database: {{ .Values.appConfig.backend.database.connection.database | quote }}
+      ssl:
+        sslmode: {{ .Values.appConfig.backend.database.connection.ssl.mode | quote }}
+        rejectUnauthorized: {{ .Values.appConfig.backend.database.connection.ssl.rejectUnauthorized | quote }}
+        ca: {{ include "kerberus-dashboard.backend.postgresCaFilename" . | quote }}
 
-integrations:
-  github:
-    - host: github.com
-      token:
-        $env: GITHUB_TOKEN
-    ### Example for how to add your GitHub Enterprise instance using the API:
-    # - host: ghe.example.net
-    #   apiBaseUrl: https://ghe.example.net/api/v3
-    #   token:
-    #     $env: GHE_TOKEN
-
-proxy:
-  '/argocd/api':
-    # url to the api of your hosted argoCD instance
-    target: {{ .Values.app.config.argoUrl }}
-    changeOrigin: true
-    # this line is required if your hosted argoCD instance has self-signed certificate
-    secure: false
-    headers:
-      Cookie:
-        $env: ARGOCD_AUTH_TOKEN
-
-# Reference documentation http://backstage.io/docs/features/techdocs/configuration
-# Note: After experimenting with basic setup, use CI/CD to generate docs
-# and an external cloud storage when deploying TechDocs for production use-case.
-# https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
-techdocs:
-  builder: 'local' # Alternatives - 'external'
-  generators:
-    techdocs: 'docker' # Alternatives - 'local'
-  publisher:
-    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+catalog:
+{{- if .Values.backend.demoData }}
+  locations:
+    # Kerberus Dashboard example components
+    - type: github
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-components.yaml
+    # Example component for github-actions
+    - type: github
+      target: https://github.com/backstage/backstage/blob/master/plugins/github-actions/examples/sample.yaml
+    # Example component for techdocs
+    - type: github
+      target: https://github.com/backstage/backstage/blob/master/plugins/techdocs-backend/examples/documented-component/documented-component.yaml
+    # Kerberus Dashboard example APIs
+    - type: github
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-apis.yaml
+    # Kerberus Dashboard example templates
+    - type: github
+      target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/all-templates.yaml
+{{- else }}
+  rules:
+    - allow: [Component, API, Group, User, Template, Location]
+  locations: []
+{{- end }}
 
 auth:
-  # see https://backstage.io/docs/tutorials/quickstart-app-auth to know more about enabling auth providers
   providers:
     github:
       development:
@@ -68,13 +63,44 @@ auth:
         enterpriseInstanceUrl:
           $env: AUTH_GITHUB_ENTERPRISE_INSTANCE_URL
 
+integrations:
+  github:
+    - host: github.com
+      token:
+        $env: GITHUB_TOKEN
+
+proxy:
+  '/argocd/api':
+    # url to the api of your hosted argoCD instance
+    target: {{ .Values.argocd.baseUrl }}/api/v1/
+    changeOrigin: true
+    # this line is required if your hosted argoCD instance has self-signed certificate
+    secure: false
+    headers:
+      Cookie:
+        $env: ARGOCD_AUTH_TOKEN
+
 scaffolder:
   github:
     token:
       $env: GITHUB_TOKEN
     visibility: public # or 'internal' or 'private'
 
-catalog:
-  rules:
-    - allow: [Component, API, Group, User, Template, Location]
-  locations: []
+sentry:
+  organization: {{ .Values.appConfig.sentry.organization | quote }}
+
+techdocs:
+  generators:
+    techdocs: 'local'
+
+kubernetes:
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'config'
+      clusters:
+        - url: {{ .Values.kubernetes.url }}
+          name: minikube
+          authProvider: 'serviceAccount'
+          serviceAccountToken:
+            $env: K8S_TOKEN

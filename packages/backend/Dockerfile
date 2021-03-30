@@ -35,6 +35,7 @@ RUN pip3.8 install cookiecutter && \
     rm -rf /var/cache/apt/* /tmp/Python-3.8.2
 
 RUN yarn install --frozen-lockfile --production --network-timeout 300000 && rm -rf "$(yarn cache dir)"
+
 # Then copy the rest of the backend bundle, along with any other files we might want.
 ADD packages/backend/dist/bundle.tar.gz app-config.yaml ./
 

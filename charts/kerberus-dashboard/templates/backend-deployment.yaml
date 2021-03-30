@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kerberus-dashboard.fullname" . }}-backend
+
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: kerberus-dashboard
+      component: backend
+
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/kerberus-dashboard.logs: '[{"source":"kerberus-dashboard","service":"backend"}]'
+      labels:
+        app: kerberus-dashboard
+        component: backend
+
+    spec:
+      {{- if .Values.dockerRegistrySecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.dockerRegistrySecretName }}
+      {{- end}}
+      containers:
+        - name: {{ .Chart.Name }}-backend
+          image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.containerPort }}
+          resources:
+          {{- toYaml .Values.backend.resources | nindent 12 }}
+
+          envFrom:
+            - secretRef:
+                name: {{ include "kerberus-dashboard.fullname" . }}-backend
+            - configMapRef:
+                name: {{ include "kerberus-dashboard.fullname" . }}-app-env
+            - configMapRef:
+                name: {{ include "kerberus-dashboard.fullname" . }}-auth
+          env:
+            - name: APP_CONFIG_backend_database_connection_password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "backend.postgresql.passwordSecret" .}}
+                  key: postgresql-password
+          volumeMounts:
+            - name: postgres-ca
+              mountPath: {{ include "kerberus-dashboard.backend.postgresCaDir" . }}
+            - name: app-config
+              mountPath: {{ printf "/app/%s" (include "kerberus-dashboard.appConfigFilename" .) }}
+              subPath: {{ include "kerberus-dashboard.appConfigFilename" . }}
+
+      volumes:
+        - name: postgres-ca
+          configMap:
+            name: {{ include "kerberus-dashboard.fullname" . }}-postgres-ca
+        - name: app-config
+          configMap:
+            name: {{ include "kerberus-dashboard.fullname" . }}-app-config
+
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}
+      {{- end }}
+
+{{- if .Values.backend.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "backend.serviceName" . }}
+
+spec:
+  ports:
+    - port: 80
+      targetPort: {{ .Values.backend.containerPort }}
+
+  selector:
+    app: kerberus-dashboard
+    component: backend
+
+  type: ClusterIP
+{{- end }}

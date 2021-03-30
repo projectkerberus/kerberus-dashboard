@@ -14,7 +14,9 @@
     "lint": "backstage-cli lint",
     "test": "backstage-cli test",
     "clean": "backstage-cli clean",
-    "migrate:create": "knex migrate:make -x ts"
+    "migrate:create": "knex migrate:make -x ts",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "dependencies": {
     "@backstage/backend-common": "^0.6.0",
@@ -34,7 +36,8 @@
     "express-promise-router": "^4.1.0",
     "knex": "^0.21.6",
     "pg": "^8.3.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "snyk": "^1.517.0"
   },
   "devDependencies": {
     "@backstage/cli": "^0.6.6",
@@ -44,5 +47,6 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "snyk": true
 }

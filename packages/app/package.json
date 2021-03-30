@@ -30,7 +30,8 @@
     "react-dom": "^16.13.1",
     "react-router": "6.0.0-beta.0",
     "react-router-dom": "6.0.0-beta.0",
-    "react-use": "^15.3.3"
+    "react-use": "^15.3.3",
+    "snyk": "^1.517.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.10.1",
@@ -54,7 +55,9 @@
     "test:e2e": "cross-env PORT=3001 start-server-and-test start http://localhost:3001 cy:dev",
     "test:e2e:ci": "cross-env PORT=3001 start-server-and-test start http://localhost:3001 cy:run",
     "cy:dev": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "browserslist": {
     "production": [
@@ -70,5 +73,6 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "snyk": true
 }

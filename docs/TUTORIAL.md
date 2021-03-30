@@ -63,7 +63,7 @@ Export `Client ID` and `Client secret`:
 ➜ minikube addons enable ingress
 🌟  The 'ingress' addon is enabled
 
-➜ kubectl config view --minify > /tmp/kubeconfig-kerberusdemo
+➜ kubectl config view --minify > /tmp/kubeconfig-kerberus-demo
 ```
 
 ### 3. Install Crossplane and GCP Provider Config
@@ -79,7 +79,7 @@ remote: Compressing objects: 100% (48/48), done.
 remote: Total 69 (delta 27), reused 56 (delta 16), pack-reused 0
 Unpacking objects: 100% (69/69), done.
 
-➜ cd kerberus-platform
+➜ cd kerberus-platform/terraform
 ```
 
 You should have a path tree like this:
@@ -103,9 +103,9 @@ You should have a path tree like this:
 Create `terraform.tfvars` with the content:
 
 ```yaml
-GCP_PROJECT = "kerberusdemo"
-GCP_SA = "kerberusdemo-sa"
-PATH_KUBECONFIG = "/tmp/kubeconfig-kerberusdemo"
+GCP_PROJECT = "kerberus-demo"
+GCP_SA = "kerberus-demo-sa"
+PATH_KUBECONFIG = "/tmp/kubeconfig-kerberus-demo"
 CROSSPLANE_REGISTRY = "ghcr.io/projectkerberus/platform-ref-gcp:latest"
 ARGOCD_HOSTNAME = "argocd.demo.io"
 ```
@@ -129,15 +129,15 @@ Confirming on form:
 
 ![GCloud authentication](media/gcloud_auth_1.png)
 
-And [create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) called `kerberusdemo`. 
+And [create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) called `kerberus-demo`. 
 
 ```bash
-➜ gcloud projects create kerberusdemo
+➜ gcloud projects create kerberus-demo
 ```
 
-Set `kerberusdemo` as your current project.
+Set `kerberus-demo` as your current project.
 ```bash
-➜ gcloud config set project kerberusdemo
+➜ gcloud config set project kerberus-demo
 ```
 
 
@@ -146,7 +146,7 @@ Finally, link the project and your billing account
 ➜ gcloud alpha billing accounts list
 # copy the Account ID from here
 
-➜ gcloud alpha billing projects link kerberusdemo --billing-account ACCOUNT_ID_FROM_PREVIOUS_COMMAND
+➜ gcloud alpha billing projects link kerberus-demo --billing-account ACCOUNT_ID_FROM_PREVIOUS_COMMAND
 ```
 
 ### 4. Run the Terraform script

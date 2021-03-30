@@ -54,7 +54,7 @@ import {
   ArgoCDDetailsWidget,
   isArgocdAvailable
 } from '@roadiehq/backstage-plugin-argo-cd';
-
+import { Router as KubernetesRouter } from '@backstage/plugin-kubernetes';
 
 const CICDSwitcher = ({ entity }: { entity: Entity }) => {
   // This component is just an example of how you can implement your company's logic in entity page.
@@ -127,6 +127,11 @@ const ServiceEntityPage = ({ entity }: { entity: Entity }) => (
       path="/docs/*"
       title="Docs"
       element={<DocsRouter entity={entity} />}
+    />
+    <EntityPageLayout.Content
+      path="/kubernetes/*"
+      title="Kubernetes"
+      element={<KubernetesRouter entity={entity} />}
     />
   </EntityPageLayout>
 );

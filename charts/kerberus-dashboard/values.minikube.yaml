@@ -1,0 +1,153 @@
+frontend:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 8080
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+backend:
+  enabled: true
+  demoData: false
+  replicaCount: 1
+  image:
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 7000
+  resources:
+    requests:
+      memory: 512Mi
+    limits:
+      memory: 1024Mi
+
+lighthouse:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: roadiehq/lighthouse-audit-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 3003
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  database:
+    connection:
+      port:
+      host:
+      user:
+      password:
+      database: lighthouse_audit_service
+    pathToDatabaseCa:
+
+nameOverride: ''
+fullnameOverride: ''
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: kerberus-dashboard.demo.io
+      paths:
+      - /
+
+issuer:
+  email:
+  clusterIssuer: 'letsencrypt-staging'
+
+global:
+  postgresql:
+    postgresqlUsername: backend-user
+    postgresqlPassword: backend-user
+    caFilename: ca.crt
+  nodeSelector: {}
+
+postgresql:
+  enabled: true
+  nameOverride: postgresql
+  tls:
+    enabled: true
+    certificatesSecret: kerberus-dashboard-postgresql-certs
+    certFilename: tls.crt
+    certKeyFilename: tls.key
+  volumePermissions:
+    securityContext:
+      runAsUser: 1001
+    enabled: true
+  initdbScriptsSecret: kerberus-dashboard-postgresql-initdb
+
+argocd:
+  baseUrl: https://argocd.demo.io
+  token: argocd.token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJrZXJiZXJ1cy1kYXNoYm9hcmQiLCJpYXQiOjE2MTcxMTEwMDMsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTYxNzExMTAwMywic3ViIjoia2VyYmVydXMtZGFzaGJvYXJkOmFwaUtleSJ9.q_Q_HLHcuab6tuHX8ZN9cEV__wzWMIvTqNAvH6yv0Fk
+
+appConfig:
+  app:
+    baseUrl: https://kerberus-dashboard.demo.io
+    title: Kerberus Dashboard
+    googleAnalyticsTrackingId:
+  
+  organization: Project Kerberus
+  
+  backend:
+    baseUrl: https://kerberus-dashboard.demo.io
+    listen:
+      port: 7000
+    cors:
+      origin: https://kerberus-dashboard.demo.io
+    database:
+      client: pg
+      connection:
+        database: backstage_plugin_catalog
+        host:
+        user:
+        port:
+        password:
+        ssl:
+          rejectUnauthorized: false
+          ca:
+  sentry:
+    organization: Project Kerberus
+  techdocs:
+    storageUrl: https://kerberus-dashboard.demo.io/api/techdocs/static/docs
+    requestUrl: https://kerberus-dashboard.demo.io/api/techdocs
+  lighthouse:
+    baseUrl: https://kerberus-dashboard.demo.io/lighthouse-api
+  rollbar:
+    organization: Project Kerberus
+
+  auth:
+    providers:
+      github:
+        development:
+          appOrigin: https://kerberus-dashboard.demo.io
+          secure: false
+          clientId:
+            $env: AUTH_GITHUB_CLIENT_ID
+          clientSecret:
+            $env: AUTH_GITHUB_CLIENT_SECRET
+
+auth:
+  github:
+    clientId: a
+    clientSecret: b
+  sentryToken: e
+  rollbarAccountToken: f
+  # This is a 'Personal Access Token'
+  circleciAuthToken: r
+  # Used by the scaffolder to create GitHub repos. Must have 'repo' scope.
+  githubToken: d
+  gitlabToken: g
+  newRelicRestApiKey: r
+  travisciAuthToken: fake-travis-ci-auth-token
+  pagerdutyToken: h

@@ -7,3 +7,4 @@ export { plugin as TechDocsPlugin } from '@backstage/plugin-techdocs';
 export { plugin as TechRadar } from '@backstage/plugin-tech-radar';
 export { plugin as UserSettings } from '@backstage/plugin-user-settings';
 export { plugin as ArgoCD } from '@roadiehq/backstage-plugin-argo-cd';
+export { plugin as Kubernetes } from '@backstage/plugin-kubernetes';

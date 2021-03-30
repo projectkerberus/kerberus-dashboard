@@ -92,3 +92,15 @@ sentry:
 techdocs:
   generators:
     techdocs: 'local'
+
+kubernetes:
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'config'
+      clusters:
+        - url: {{ .Values.kubernetes.url }}
+          name: minikube
+          authProvider: 'serviceAccount'
+          serviceAccountToken:
+            $env: K8S_TOKEN

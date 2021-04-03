@@ -96,9 +96,9 @@ appConfig:
     baseUrl: https://kerberus-dashboard.demo.io
     title: Kerberus Dashboard
     googleAnalyticsTrackingId:
-  
+
   organization: Project Kerberus
-  
+
   backend:
     baseUrl: https://kerberus-dashboard.demo.io
     listen:

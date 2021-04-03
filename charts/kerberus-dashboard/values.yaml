@@ -138,7 +138,7 @@ appConfig:
             $env: AUTH_GITHUB_CLIENT_SECRET
 
 kubernetes:
-  url: https://206.189.193.36:6443 
+  url: https://206.189.193.36:6443
 
 auth:
   github:

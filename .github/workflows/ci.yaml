@@ -65,7 +65,7 @@ jobs:
       #   run: .github/kubeval.sh
 
       - name: Add bitnami helm report
-        run: helm repo add bitnami https://charts.bitnami.com/bitnam
+        run: helm repo add bitnami https://charts.bitnami.com/bitnami
 
       - name: Find helm repo
         run: ls -la $HOME/.config/helm

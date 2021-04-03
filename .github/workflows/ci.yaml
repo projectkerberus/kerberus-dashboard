@@ -28,7 +28,7 @@ jobs:
         uses: helm/chart-testing-action@v2.0.1
 
       - name: Add bitnami helm report
-        run: helm repo add https://charts.bitnami.com/bitnami
+        run: helm repo add bitnami https://charts.bitnami.com/bitnami 
 
       - name: Run chart-testing (lint)
         run: ct lint --all

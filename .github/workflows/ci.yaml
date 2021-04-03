@@ -63,6 +63,10 @@ jobs:
       #   env:
       #     KUBERNETES_VERSION: ${{ matrix.k8s }}
       #   run: .github/kubeval.sh
+
+      - name: Add bitnami helm report
+        run: helm repo add bitnami https://charts.bitnami.com/bitnami
+
       - name: Run kubeval
         uses: desaintmartin/helm-kubeval-action@master
         with:

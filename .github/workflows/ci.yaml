@@ -75,7 +75,8 @@ jobs:
         with:
           path: ./charts
           version: ${{ matrix.k8s }}
-  
+          config: $HOME/.config/helm/repositories.yaml 
+
   # install-chart:
   #   name: install-chart
   #   runs-on: ubuntu-latest

@@ -64,6 +64,9 @@ jobs:
       #     KUBERNETES_VERSION: ${{ matrix.k8s }}
       #   run: .github/kubeval.sh
 
+      - name: Add bitnami helm report
+        run: helm repo add bitnami https://charts.bitnami.com/bitnam
+
       - name: Find helm repo
         run: ls -la $HOME/.config/helm
 

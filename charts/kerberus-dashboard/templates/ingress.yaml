@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled -}}
 {{- $frontendUrl := urlParse .Values.appConfig.app.baseUrl}}
 {{- $backendUrl := urlParse .Values.appConfig.backend.baseUrl}}
 {{- $lighthouseUrl := urlParse .Values.appConfig.lighthouse.baseUrl}}
@@ -78,3 +79,4 @@ spec:
               serviceName: {{ include "lighthouse.serviceName" . }}
               servicePort: 80
 {{- end }}
+{{- end -}}

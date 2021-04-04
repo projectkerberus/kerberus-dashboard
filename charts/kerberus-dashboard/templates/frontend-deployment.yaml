@@ -62,5 +62,5 @@ spec:
     app: kerberus-dashboard
     component: frontend
 
-  type: ClusterIP
+  type: {{ .Values.frontend.service.type }}
 {{- end }}

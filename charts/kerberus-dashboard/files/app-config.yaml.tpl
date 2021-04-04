@@ -104,3 +104,4 @@ kubernetes:
           authProvider: 'serviceAccount'
           serviceAccountToken:
             $env: K8S_TOKEN
+

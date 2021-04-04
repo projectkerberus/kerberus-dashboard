@@ -10,5 +10,5 @@ tar -xf /tmp/helm-docs.tar.gz helm-docs
 
 # validate docs
 ./helm-docs
-git status --porcelain=v2 --verbose
-git diff --exit-code
+git diff
+#git diff --exit-code

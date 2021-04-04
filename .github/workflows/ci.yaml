@@ -70,6 +70,9 @@ jobs:
       - name: Find helm repo
         run: ls -la $HOME/.config/helm
 
+      - name: Helm repo list
+        run: helm repo list
+
       - name: Run kubeval
         uses: desaintmartin/helm-kubeval-action@master
         with:

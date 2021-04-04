@@ -67,8 +67,8 @@ jobs:
       - name: Add bitnami helm report
         run: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-      - name: Find helm repo
-        run: ls -la $HOME/.config/helm
+#      - name: Find helm repo
+#        run: ls -la $HOME/.config/helm
 
       - name: Run kubeval
         uses: desaintmartin/helm-kubeval-action@master

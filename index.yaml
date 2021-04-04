@@ -3,6 +3,30 @@ entries:
   kerberus-dashboard:
   - apiVersion: v2
     appVersion: v0.1.1-alpha.23
+    created: "2021-04-04T16:49:46.268040186Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.4.1
+    description: Kerberus Dashboard provides a GUI for the self-service concept provided
+      by Kerberus
+    digest: 9296dc1bee03d67e452efc9acb9f93a28da43e7b11e3785f894503de223f962c
+    icon: https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png
+    maintainers:
+    - name: banshee86vr
+      url: https://github.com/banshee86vr
+    - name: idallaserra
+      url: https://github.com/idallaserra
+    - name: braghettos
+      url: https://github.com/braghettos
+    name: kerberus-dashboard
+    type: application
+    urls:
+    - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.2/kerberus-dashboard-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: v0.1.1-alpha.23
     created: "2021-03-30T21:48:45.192081267Z"
     dependencies:
     - condition: postgresql.enabled
@@ -36,4 +60,4 @@ entries:
     urls:
     - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.0/kerberus-dashboard-0.1.0.tgz
     version: 0.1.0
-generated: "2021-03-30T21:48:45.192095268Z"
+generated: "2021-04-04T16:49:46.268070886Z"

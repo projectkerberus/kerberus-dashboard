@@ -55,12 +55,6 @@ fullnameOverride: ''
 ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    ingress.kubernetes.io/force-ssl-redirect: "true"
-  hosts:
-    - host: kerberus-dashboard.demo.io
-      paths:
-      - /
 
 issuer:
   email:
@@ -69,7 +63,6 @@ issuer:
 global:
   postgresql:
     postgresqlUsername: backend-user
-    postgresqlPassword: backend-user
     caFilename: ca.crt
   nodeSelector: {}
 
@@ -89,16 +82,13 @@ postgresql:
 
 argocd:
   baseUrl: https://argocd.demo.io
-  token: argocd.token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJrZXJiZXJ1cy1kYXNoYm9hcmQiLCJpYXQiOjE2MTcxMTEwMDMsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTYxNzExMTAwMywic3ViIjoia2VyYmVydXMtZGFzaGJvYXJkOmFwaUtleSJ9.q_Q_HLHcuab6tuHX8ZN9cEV__wzWMIvTqNAvH6yv0Fk
+  token: TBD
 
 appConfig:
   app:
     baseUrl: https://kerberus-dashboard.demo.io
     title: Kerberus Dashboard
     googleAnalyticsTrackingId:
-  
-  organization: Project Kerberus
-  
   backend:
     baseUrl: https://kerberus-dashboard.demo.io
     listen:
@@ -130,12 +120,14 @@ appConfig:
     providers:
       github:
         development:
-          appOrigin: https://kerberus-dashboard.demo.io
+          appOrigin: 'https://kerberus-dashboard.demo.io'
           secure: false
           clientId:
             $env: AUTH_GITHUB_CLIENT_ID
           clientSecret:
             $env: AUTH_GITHUB_CLIENT_SECRET
+          enterpriseInstanceUrl:
+            $env: AUTH_GITHUB_ENTERPRISE_INSTANCE_URL
 
 auth:
   github:
@@ -146,7 +138,7 @@ auth:
   # This is a 'Personal Access Token'
   circleciAuthToken: r
   # Used by the scaffolder to create GitHub repos. Must have 'repo' scope.
-  githubToken: d
+  githubToken: g
   gitlabToken: g
   newRelicRestApiKey: r
   travisciAuthToken: fake-travis-ci-auth-token

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+set -x
 
 HELM_DOCS_VERSION="0.11.0"
 
@@ -9,4 +10,5 @@ tar -xf /tmp/helm-docs.tar.gz helm-docs
 
 # validate docs
 ./helm-docs
-git diff --exit-code
+git diff
+#git diff --exit-code

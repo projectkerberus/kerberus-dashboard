@@ -70,12 +70,12 @@ jobs:
       - name: Find helm repo
         run: ls -la $HOME/.config/helm
 
-      - name: Run kubeval
-        uses: desaintmartin/helm-kubeval-action@master
-        with:
-          path: ./charts
-          version: ${{ matrix.k8s }}
-          config: $HOME/.config/helm/repositories.yaml 
+#      - name: Run kubeval
+#        uses: desaintmartin/helm-kubeval-action@master
+#        with:
+#          path: ./charts
+#          version: ${{ matrix.k8s }}
+#          config: $HOME/.config/helm/repositories.yaml 
 
   # install-chart:
   #   name: install-chart

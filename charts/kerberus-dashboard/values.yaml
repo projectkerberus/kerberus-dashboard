@@ -139,7 +139,7 @@ appConfig:
 
 kubernetes:
   url: https://206.189.193.36:6443
-
+  token: a
 
 auth:
   github:

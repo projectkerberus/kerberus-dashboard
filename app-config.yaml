@@ -1,18 +1,21 @@
 app:
   title: Kerberus Dashboard
-  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
+  baseUrl: 
+    $env: KERBERUS_DASHBOARD_URL
 
 organization:
   name: Project Kerberus
 
 backend:
-  baseUrl: https://kerberus-dashboard.projectx.kiratech.biz/
+  baseUrl:
+    $env: KERBERUS_DASHBOARD_URL 
   listen:
     port: 7000
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: https://kerberus-dashboard.projectx.kiratech.biz/
+    origin:
+      $env: KERBERUS_DASHBOARD_URL 
     methods: [GET, POST, PUT, DELETE]
     credentials: true
   # config options: https://node-postgres.com/api/client

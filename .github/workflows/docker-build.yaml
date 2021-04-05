@@ -20,25 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Yarn install 
-        uses: borales/actions-yarn@v2.0.0
+      - uses: actions/setup-node@v2
         with:
-          cmd: install # will run `yarn install` command
+          node-version: '14.x'
 
-      - name: Yarn tsc 
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: tsc # will run `yarn tsc` command
-
-      - name: Yarn build
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: build # will run `yarn build` command
-
-      - name: Yarn build-image-frontend
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: build-image-frontend # will run `yarn build-image-frontend` command
+      - run: yarn install
 
       - name: Yarn build-image-backend
         uses: borales/actions-yarn@v2.0.0

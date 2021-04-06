@@ -46,32 +46,29 @@ jobs:
       - name: Push frontend docker image
         if: github.event_name != 'pull_request'
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/kerberus-dashboard-backend
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/kerberus-dashboard-frontend
 
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          VERSION=0.1.1-oss
+          VERSION=0.1.2-oss
 
           #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag kerberus-dashboard-frontend $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
       - name: Push backend docker image
         if: github.event_name != 'pull_request'
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/kerberus-dashboard-backend
 
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          VERSION=0.1.2-oss
 
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag kerberus-dashboard-backend $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION

@@ -2,9 +2,9 @@ frontend:
   enabled: true
   replicaCount: 1
   image:
-    repository: kerberus-dashboard-frontend
-    tag: test3
-    pullPolicy: Never
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
   containerPort: 8080
   resources:
     requests:
@@ -19,15 +19,17 @@ backend:
   demoData: false
   replicaCount: 1
   image:
-    repository: kerberus-dashboard-backend
-    tag: latest
-    pullPolicy: Never
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
   containerPort: 7000
   resources:
     requests:
       memory: 512Mi
     limits:
       memory: 1024Mi
+  service:
+    type: ClusterIP
 
 lighthouse:
   enabled: false

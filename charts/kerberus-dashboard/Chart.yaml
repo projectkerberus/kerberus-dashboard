@@ -4,7 +4,7 @@ description: Kerberus Dashboard provides a GUI for the self-service concept prov
 type: application
 icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
 
-version: 0.1.2
+version: 0.1.0
 
 appVersion: v0.1.1-alpha.23
 

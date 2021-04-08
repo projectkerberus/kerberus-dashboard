@@ -1,18 +1,18 @@
 app:
   title: Kerberus Dashboard
-  baseUrl: https://kerberus-dashboard.demo.io 
+  baseUrl: http://localhost:3000
 
 organization:
   name: Project Kerberus
 
 backend:
-  baseUrl: https://kerberus-dashboard.demo.io
+  baseUrl: http://localhost:7000
   listen:
     port: 7000
   csp:
     connect-src: ["'self'", 'http:', 'https:']
   cors:
-    origin: https://kerberus-dashboard.demo.io
+    origin: http://localhost:3000
     methods: [GET, POST, PUT, DELETE]
     credentials: true
   # config options: https://node-postgres.com/api/client
@@ -56,7 +56,7 @@ proxy:
 techdocs:
   builder: 'local' # Alternatives - 'external'
   generators:
-    techdocs: 'docker' # Alternatives - 'local'
+    techdocs: 'local' # Alternatives - 'local'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
  
@@ -122,4 +122,3 @@ catalog:
       target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/docs-template/template.yaml
       rules:
         - allow: [Template]
-

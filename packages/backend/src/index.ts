@@ -18,6 +18,7 @@ import {
   UrlReaders,
 } from '@backstage/backend-common';
 import { Config } from '@backstage/config';
+import app from './plugins/app';
 import auth from './plugins/auth';
 import catalog from './plugins/catalog';
 import scaffolder from './plugins/scaffolder';
@@ -54,6 +55,7 @@ async function main() {
   const authEnv = useHotMemoize(module, () => createEnv('auth'));
   const proxyEnv = useHotMemoize(module, () => createEnv('proxy'));
   const techdocsEnv = useHotMemoize(module, () => createEnv('techdocs'));
+  const appEnv = useHotMemoize(module, () => createEnv('app'));
   const kubernetesEnv = useHotMemoize(module, () => createEnv('kubernetes'));
 
   const apiRouter = Router();
@@ -62,12 +64,13 @@ async function main() {
   apiRouter.use('/auth', await auth(authEnv));
   apiRouter.use('/techdocs', await techdocs(techdocsEnv));
   apiRouter.use('/proxy', await proxy(proxyEnv));
-  apiRouter.use('/kubernetes', await kubernetes(kubernetesEnv));
   apiRouter.use(notFoundHandler());
+  apiRouter.use('/kubernetes', await kubernetes(kubernetesEnv));
 
   const service = createServiceBuilder(module)
     .loadConfig(config)
-    .addRouter('/api', apiRouter);
+    .addRouter('/api', apiRouter)
+    .addRouter('', await app(appEnv));
 
   await service.start().catch(err => {
     console.log(err);

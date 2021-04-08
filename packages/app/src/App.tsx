@@ -4,7 +4,7 @@ import {
   AlertDisplay,
   createApp,
   FlatRoutes,
-  OAuthRequestDialog,
+  OAuthRequestDialog
 } from '@backstage/core';
 import { apiDocsPlugin, ApiExplorerPage } from '@backstage/plugin-api-docs';
 import {
@@ -29,16 +29,15 @@ const app = createApp({
   plugins: Object.values(plugins),
   components: {
     SignInPage: props => (
-    <SignInPage
+      <SignInPage
         {...props}
-        auto
         provider={{
-        id: 'github-auth-provider',
-        title: 'GitHub',
-        message: 'Kerberus Dashboard Login',
-        apiRef: githubAuthApiRef,
-        }}
-    />
+          id: 'github-auth-provider',
+          title: 'GitHub',
+          message: 'Kerberus Dashboard Login',
+          apiRef: githubAuthApiRef,
+          }}
+      />
     ),
   },
   bindRoutes({ bind }) {

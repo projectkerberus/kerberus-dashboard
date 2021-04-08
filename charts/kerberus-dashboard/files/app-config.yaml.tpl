@@ -90,8 +90,11 @@ sentry:
   organization: {{ .Values.appConfig.sentry.organization | quote }}
 
 techdocs:
+  builder: 'local'
   generators:
     techdocs: 'local'
+  publisher:
+    type: 'local'
 
 kubernetes:
   serviceLocatorMethod:

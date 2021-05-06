@@ -3,7 +3,7 @@ frontend:
   replicaCount: 1
   image:
     repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
-    tag: 0.1.0
+    tag: v0.1.0
     pullPolicy: IfNotPresent
   containerPort: 8080
   resources:
@@ -20,7 +20,7 @@ backend:
   replicaCount: 1
   image:
     repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
-    tag: 0.1.0
+    tag: v0.1.0
     pullPolicy: IfNotPresent
   containerPort: 7000
   resources:
@@ -143,20 +143,19 @@ appConfig:
             $env: AUTH_GITHUB_CLIENT_SECRET
 
 kubernetes:
-  url: https://192.168.99.129:6443
-  token: a
+  url: https://127.0.0.1:6443
+  token: fake-kubernets-token
 
 auth:
   github:
-    clientId: e8d120e9d2b35b9b0e19
-    clientSecret: 6162f77388d6e785a686dd01492aa33060674398
-  sentryToken: e
-  rollbarAccountToken: f
-  # This is a 'Personal Access Token'
-  circleciAuthToken: r
+    clientId: fake-github-client-id
+    clientSecret: fake-github-client-secret
+  sentryToken: fake-sentry-token
+  rollbarAccountToken: fake-rollbar-account-token
+  circleciAuthToken: fake-circle-auth-token
   # Used by the scaffolder to create GitHub repos. Must have 'repo' scope.
-  githubToken: d
-  gitlabToken: g
-  newRelicRestApiKey: r
+  githubToken: fake-github-token
+  gitlabToken: fake-gitlab-token
+  newRelicRestApiKey: fake-newrelic-res-api-token
   travisciAuthToken: fake-travis-ci-auth-token
-  pagerdutyToken: h
+  pagerdutyToken: fake-pagerduty-token

@@ -68,6 +68,10 @@ integrations:
     - host: github.com
       token:
         $env: GITHUB_TOKEN
+  gitlab:
+    - host: gitlab.com
+      token:
+        $env: GITLAB_TOKEN
 
 proxy:
   '/argocd/api':
@@ -84,6 +88,10 @@ scaffolder:
   github:
     token:
       $env: GITHUB_TOKEN
+    visibility: public # or 'internal' or 'private'
+  gitlab:
+    token:
+      $env: GITLAB_TOKEN
     visibility: public # or 'internal' or 'private'
 
 sentry:

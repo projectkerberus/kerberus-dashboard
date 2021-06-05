@@ -27,7 +27,7 @@
     "@backstage/plugin-kubernetes-backend": "^0.3.4",
     "@backstage/plugin-proxy-backend": "^0.2.6",
     "@backstage/plugin-scaffolder-backend": "^0.9.4",
-    "@backstage/plugin-techdocs-backend": "^0.7.0",
+    "@backstage/plugin-techdocs-backend": "^0.8.0",
     "@gitbeaker/node": "^28.0.2",
     "@octokit/rest": "^18.0.12",
     "app": "0.0.0",

@@ -29,6 +29,33 @@ entries:
   kerberus-dashboard:
   - apiVersion: v2
     appVersion: v0.1.1-alpha.23
+    created: "2021-06-17T13:16:47.508474397Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.4.1
+    description: Kerberus Dashboard provides a GUI for the self-service concept provided
+      by Kerberus Project
+    digest: e8b11a7c5230794d2bd46513cad082b0479260fed92106d76276199e7516cba7
+    icon: https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png
+    maintainers:
+    - email: martina@roadie.io
+      name: Martina Iglesias Fernández
+      url: https://roadie.io
+    - email: david@roadie.io
+      name: David Tuite
+      url: https://roadie.io
+    name: kerberus-dashboard
+    sources:
+    - https://github.com/backstage/backstage
+    - https://github.com/spotify/lighthouse-audit-service
+    type: application
+    urls:
+    - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.2.0/kerberus-dashboard-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: v0.1.1-alpha.23
     created: "2021-04-09T08:48:39.967689847Z"
     dependencies:
     - condition: postgresql.enabled
@@ -51,4 +78,4 @@ entries:
     urls:
     - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.0/kerberus-dashboard-0.1.0.tgz
     version: 0.1.0
-generated: "2021-06-17T13:13:05.211267869Z"
+generated: "2021-06-17T13:16:47.508488997Z"

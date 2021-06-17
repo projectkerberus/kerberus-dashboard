@@ -1,74 +1,14 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# Coverage directory generated when running tests with coverage
-coverage
-
-# Dependencies
-node_modules/
-
-# Node version directives
-.nvmrc
-
-# dotenv environment variables file
-.env
-.env.test
-
-# Build output
-dist
-dist-types
-
-# Temporary change files created by Vim
-*.swp
-
-# MkDocs build output
-site
-
-# Local configuration files
-*.local.yaml
-
-# Sensitive credentials
-*-credentials.yaml
-
-### Helm ###
-# Chart dependencies
-**/charts/*.tgz
-
-### macOS ###
-# General
+# macOS
 .DS_Store
-.AppleDouble
-.LSOverride
 
-# Icon must end with two \r
-Icon
+# IntelliJ
+.idea/
+*.iml
 
+# Visual Studio Code
+.vscode/
+.vsls.json
 
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-### Node ###
 # Logs
 logs
 *.log
@@ -121,11 +61,11 @@ typings/
 # Optional npm cache directory
 .npm
 
+# Node version directives
+.nvmrc
+
 # Optional eslint cache
 .eslintcache
-
-# Optional stylelint cache
-.stylelintcache
 
 # Microbundle cache
 .rpt2_cache/
@@ -145,11 +85,9 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
-.env*.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
-.parcel-cache
 
 # Next.js build output
 .next
@@ -157,14 +95,8 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
-
-# Storybook build outputs
-.out
-.storybook-out
-storybook-static
-
-# rollup.js default build output
-dist/
+dist-types
+dist-workspace
 
 # Gatsby files
 .cache/
@@ -190,38 +122,14 @@ dist/
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# Temporary folders
-tmp/
-temp/
+# Temporary change files created by Vim
+*.swp
 
-### VisualStudioCode ###
-.vscode/*
-!.vscode/tasks.json
-!.vscode/launch.json
-*.code-workspace
+# MkDocs build output
+site
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
+# Local configuration files
+*.local.yaml
 
-### yarn ###
-# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
-
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-
-# if you are NOT using Zero-installs, then:
-# comment the following lines
-!.yarn/cache
-
-# and uncomment the following lines
-# .pnp.*
-
-# Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
-
-# Values file for Demo instance
-values.demo.yaml
+# Sensitive credentials
+*-credentials.yaml

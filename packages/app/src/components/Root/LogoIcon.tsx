@@ -24,7 +24,10 @@ const useStyles = makeStyles({
   },
   polygon: {
     fill: '#fff',
-  }
+  },
+  path: {
+    fill: '#fff',
+  },
 });
 
 const LogoIcon = () => {

@@ -4,9 +4,17 @@ description: Kerberus Dashboard provides a GUI for the self-service concept prov
 type: application
 icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
 
-version: 0.1.0
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+version: 0.2.0
 
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application.
 appVersion: v0.1.1-alpha.23
+
+sources:
+  - https://github.com/backstage/backstage
+  - https://github.com/spotify/lighthouse-audit-service
 
 dependencies:
   - name: postgresql
@@ -15,9 +23,9 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
 
 maintainers:
-  - name: banshee86vr
-    url: https://github.com/banshee86vr
-  - name: idallaserra
-    url: https://github.com/idallaserra
-  - name: braghettos
-    url: https://github.com/braghettos
+  - name: Martina Iglesias Fernández
+    email: martina@roadie.io
+    url: https://roadie.io
+  - name: David Tuite
+    email: david@roadie.io
+    url: https://roadie.io

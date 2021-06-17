@@ -13,324 +13,538 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react';
-import { Button, Grid } from '@material-ui/core';
-import {
-  ApiEntity,
-  DomainEntity,
-  Entity,
-  GroupEntity,
-  SystemEntity,
-  UserEntity,
-} from '@backstage/catalog-model';
+
+import React, { ReactNode, useMemo, useState } from 'react';
+import BadgeIcon from '@material-ui/icons/CallToAction';
 import { EmptyState } from '@backstage/core';
 import {
-  ApiDefinitionCard,
-  ConsumedApisCard,
-  ConsumingComponentsCard,
+  EntityApiDefinitionCard,
+  EntityConsumingComponentsCard,
   EntityHasApisCard,
-  ProvidedApisCard,
-  ProvidingComponentsCard,
+  EntityProvidingComponentsCard,
+  EntityProvidedApisCard,
+  EntityConsumedApisCard,
 } from '@backstage/plugin-api-docs';
+import { EntityBadgesDialog } from '@backstage/plugin-badges';
 import {
-  AboutCard,
+  EntityAboutCard,
+  EntityDependsOnComponentsCard,
+  EntityDependsOnResourcesCard,
   EntityHasComponentsCard,
+  EntityHasSubcomponentsCard,
   EntityHasSystemsCard,
-  EntityPageLayout,
+  EntityLayout,
+  EntityLinksCard,
+  EntitySystemDiagramCard,
+  EntitySwitch,
+  isComponentType,
+  isKind,
+  EntityHasResourcesCard,
+  EntityOrphanWarning,
+  isOrphan,
 } from '@backstage/plugin-catalog';
-import { useEntity } from '@backstage/plugin-catalog-react';
 import {
-  isPluginApplicableToEntity as isGitHubActionsAvailable,
-  Router as GitHubActionsRouter,
+  EntityCircleCIContent,
+  isCircleCIAvailable,
+} from '@backstage/plugin-circleci';
+import {
+  EntityCloudbuildContent,
+  isCloudbuildAvailable,
+} from '@backstage/plugin-cloudbuild';
+import {
+  EntityGithubActionsContent,
+  EntityRecentGithubActionsRunsCard,
+  isGithubActionsAvailable,
 } from '@backstage/plugin-github-actions';
 import {
-  GroupProfileCard,
-  MembersListCard,
-  OwnershipCard,
-  UserProfileCard,
-} from '@backstage/plugin-org';
-import { EmbeddedDocsRouter as DocsRouter } from '@backstage/plugin-techdocs';
+  EntityJenkinsContent,
+  EntityLatestJenkinsRunCard,
+  isJenkinsAvailable,
+} from '@backstage/plugin-jenkins';
+import { EntityKafkaContent } from '@backstage/plugin-kafka';
+import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 import {
-  ArgoCDDetailsWidget,
+  EntityLastLighthouseAuditCard,
+  EntityLighthouseContent,
+  isLighthouseAvailable,
+} from '@backstage/plugin-lighthouse';
+import {
+  EntityGroupProfileCard,
+  EntityMembersListCard,
+  EntityOwnershipCard,
+  EntityUserProfileCard,
+} from '@backstage/plugin-org';
+import {
+  EntityPagerDutyCard,
+  isPagerDutyAvailable,
+} from '@backstage/plugin-pagerduty';
+import {
+  EntityRollbarContent,
+  isRollbarAvailable,
+} from '@backstage/plugin-rollbar';
+import { EntitySentryContent } from '@backstage/plugin-sentry';
+import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
+import { EntityTodoContent } from '@backstage/plugin-todo';
+import { Button, Grid } from '@material-ui/core';
+import {
+  EntityBuildkiteContent,
+  isBuildkiteAvailable,
+} from '@roadiehq/backstage-plugin-buildkite';
+import {
+  EntityGithubInsightsContent,
+  EntityGithubInsightsLanguagesCard,
+  EntityGithubInsightsReadmeCard,
+  EntityGithubInsightsReleasesCard,
+  isGithubInsightsAvailable,
+} from '@roadiehq/backstage-plugin-github-insights';
+import {
+  EntityGithubPullRequestsContent,
+  EntityGithubPullRequestsOverviewCard,
+  isGithubPullRequestsAvailable,
+} from '@roadiehq/backstage-plugin-github-pull-requests';
+import {
+  EntityTravisCIContent,
+  EntityTravisCIOverviewCard,
+  isTravisciAvailable,
+} from '@roadiehq/backstage-plugin-travis-ci';
+import { EntityCodeCoverageContent } from '@backstage/plugin-code-coverage';
+import {
+  EntityArgoCDHistoryCard,
   isArgocdAvailable
 } from '@roadiehq/backstage-plugin-argo-cd';
-import { Router as KubernetesRouter } from '@backstage/plugin-kubernetes';
 
-const CICDSwitcher = ({ entity }: { entity: Entity }) => {
-  // This component is just an example of how you can implement your company's logic in entity page.
-  // You can for example enforce that all components of type 'service' should use GitHubActions
-  switch (true) {
-    case isGitHubActionsAvailable(entity):
-      return <GitHubActionsRouter entity={entity} />;
-    default:
-      return (
-        <EmptyState
-          title="No CI/CD available for this entity"
-          missing="info"
-          description="You need to add an annotation to your component if you want to enable CI/CD for it. You can read more about annotations in Backstage by clicking the button below."
-          action={
-            <Button
-              variant="contained"
-              color="primary"
-              href="https://backstage.io/docs/features/software-catalog/well-known-annotations"
-            >
-              Read more
-            </Button>
-          }
-        />
-      );
-  }
+const EntityLayoutWrapper = (props: { children?: ReactNode }) => {
+  const [badgesDialogOpen, setBadgesDialogOpen] = useState(false);
+
+  const extraMenuItems = useMemo(() => {
+    return [
+      {
+        title: 'Badges',
+        Icon: BadgeIcon,
+        onClick: () => setBadgesDialogOpen(true),
+      },
+    ];
+  }, []);
+
+  return (
+    <>
+      <EntityLayout UNSTABLE_extraContextMenuItems={extraMenuItems}>
+        {props.children}
+      </EntityLayout>
+      <EntityBadgesDialog
+        open={badgesDialogOpen}
+        onClose={() => setBadgesDialogOpen(false)}
+      />
+    </>
+  );
 };
 
-const OverviewContent = ({ entity }: { entity: Entity }) => (
-  <Grid container spacing={3} alignItems="stretch">
-    <Grid item md={6}>
-      <AboutCard entity={entity} variant="gridItem" />
-    </Grid>
-    {isArgocdAvailable(entity) && (
-      <Grid item md={6}>
-        <ArgoCDDetailsWidget entity={entity} />
+export const cicdContent = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isJenkinsAvailable}>
+      <EntityJenkinsContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isBuildkiteAvailable}>
+      <EntityBuildkiteContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isCircleCIAvailable}>
+      <EntityCircleCIContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isCloudbuildAvailable}>
+      <EntityCloudbuildContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isTravisciAvailable}>
+      <EntityTravisCIContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isGithubActionsAvailable}>
+      <EntityGithubActionsContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case>
+      <EmptyState
+        title="No CI/CD available for this entity"
+        missing="info"
+        description="You need to add an annotation to your component if you want to enable CI/CD for it. You can read more about annotations in Backstage by clicking the button below."
+        action={
+          <Button
+            variant="contained"
+            color="primary"
+            href="https://backstage.io/docs/features/software-catalog/well-known-annotations"
+          >
+            Read more
+          </Button>
+        }
+      />
+    </EntitySwitch.Case>
+  </EntitySwitch>
+);
+
+const cicdCard = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isJenkinsAvailable}>
+      <Grid item sm={6}>
+        <EntityLatestJenkinsRunCard branch="master" variant="gridItem" />
       </Grid>
-    )}
-  </Grid>
-);
+    </EntitySwitch.Case>
 
-const ComponentApisContent = ({ entity }: { entity: Entity }) => (
-  <Grid container spacing={3} alignItems="stretch">
-    <Grid item md={6}>
-      <ProvidedApisCard entity={entity} />
-    </Grid>
-    <Grid item md={6}>
-      <ConsumedApisCard entity={entity} />
-    </Grid>
-  </Grid>
-);
-
-const ServiceEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/"
-      title="Overview"
-      element={<OverviewContent entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/ci-cd/*"
-      title="CI/CD"
-      element={<CICDSwitcher entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/api/*"
-      title="API"
-      element={<ComponentApisContent entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/docs/*"
-      title="Docs"
-      element={<DocsRouter entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/kubernetes/*"
-      title="Kubernetes"
-      element={<KubernetesRouter entity={entity} />}
-    />
-  </EntityPageLayout>
-);
-
-const WebsiteEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/"
-      title="Overview"
-      element={<OverviewContent entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/ci-cd/*"
-      title="CI/CD"
-      element={<CICDSwitcher entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/docs/*"
-      title="Docs"
-      element={<DocsRouter entity={entity} />}
-    />
-  </EntityPageLayout>
-);
-
-const DefaultEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<OverviewContent entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/docs/*"
-      title="Docs"
-      element={<DocsRouter entity={entity} />}
-    />
-  </EntityPageLayout>
-);
-
-export const ComponentEntityPage = ({ entity }: { entity: Entity }) => {
-  switch (entity?.spec?.type) {
-    case 'service':
-      return <ServiceEntityPage entity={entity} />;
-    case 'website':
-      return <WebsiteEntityPage entity={entity} />;
-    default:
-      return <DefaultEntityPage entity={entity} />;
-  }
-};
-
-const ApiOverviewContent = ({ entity }: { entity: Entity }) => (
-  <Grid container spacing={3}>
-    <Grid item md={6}>
-      <AboutCard entity={entity} />
-    </Grid>
-    <Grid container item md={12}>
-      <Grid item md={6}>
-        <ProvidingComponentsCard entity={entity} />
+    <EntitySwitch.Case if={isTravisciAvailable}>
+      <Grid item sm={6}>
+        <EntityTravisCIOverviewCard />
       </Grid>
-      <Grid item md={6}>
-        <ConsumingComponentsCard entity={entity} />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case if={isGithubActionsAvailable}>
+      <Grid item sm={6}>
+        <EntityRecentGithubActionsRunsCard limit={4} variant="gridItem" />
       </Grid>
-    </Grid>
-  </Grid>
+    </EntitySwitch.Case>
+  </EntitySwitch>
 );
 
-const ApiDefinitionContent = ({ entity }: { entity: ApiEntity }) => (
-  <Grid container spacing={3}>
-    <Grid item xs={12}>
-      <ApiDefinitionCard apiEntity={entity} />
-    </Grid>
-  </Grid>
+const errorsContent = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isRollbarAvailable}>
+      <EntityRollbarContent />
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case>
+      <EntitySentryContent />
+    </EntitySwitch.Case>
+  </EntitySwitch>
 );
 
-const ApiEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<ApiOverviewContent entity={entity} />}
-    />
-    <EntityPageLayout.Content
-      path="/definition/*"
-      title="Definition"
-      element={<ApiDefinitionContent entity={entity as ApiEntity} />}
-    />
-  </EntityPageLayout>
-);
-
-const UserOverviewContent = ({ entity }: { entity: UserEntity }) => (
-  <Grid container spacing={3}>
-    <Grid item xs={12} md={6}>
-      <UserProfileCard entity={entity} variant="gridItem" />
-    </Grid>
-    <Grid item xs={12} md={6}>
-      <OwnershipCard entity={entity} variant="gridItem" />
-    </Grid>
-  </Grid>
-);
-
-const UserEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<UserOverviewContent entity={entity as UserEntity} />}
-    />
-  </EntityPageLayout>
-);
-
-const GroupOverviewContent = ({ entity }: { entity: GroupEntity }) => (
-  <Grid container spacing={3}>
-    <Grid item xs={12} md={6}>
-      <GroupProfileCard entity={entity} variant="gridItem" />
-    </Grid>
-    <Grid item xs={12} md={6}>
-      <OwnershipCard entity={entity} variant="gridItem" />
-    </Grid>
-    <Grid item xs={12}>
-      <MembersListCard entity={entity} />
-    </Grid>
-  </Grid>
-);
-
-const GroupEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<GroupOverviewContent entity={entity as GroupEntity} />}
-    />
-  </EntityPageLayout>
-);
-
-const SystemOverviewContent = ({ entity }: { entity: SystemEntity }) => (
+const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
-    <Grid item md={6}>
-      <AboutCard entity={entity} variant="gridItem" />
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
+        <Grid item sm={6}>
+          <EntityArgoCDHistoryCard />
+        </Grid> 
+      </EntitySwitch.Case>
+      <EntitySwitch.Case if={isOrphan}>
+        <Grid item xs={12}>
+          <EntityOrphanWarning />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
+    <Grid item md={8} xs={12}>
+      <EntityAboutCard variant="gridItem" />
     </Grid>
-    <Grid item md={6}>
-      <EntityHasComponentsCard variant="gridItem" />
+
+    <EntitySwitch>
+      <EntitySwitch.Case if={isPagerDutyAvailable}>
+        <Grid item md={6}>
+          <EntityPagerDutyCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
+    <Grid item md={4} xs={12}>
+      <EntityLinksCard />
     </Grid>
-    <Grid item md={6}>
-      <EntityHasApisCard variant="gridItem" />
+
+    {cicdCard}
+
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => Boolean(isGithubInsightsAvailable(e))}>
+        <Grid item md={6}>
+          <EntityGithubInsightsLanguagesCard />
+          <EntityGithubInsightsReleasesCard />
+        </Grid>
+        <Grid item md={6}>
+          <EntityGithubInsightsReadmeCard maxHeight={350} />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
+    <EntitySwitch>
+      <EntitySwitch.Case if={isLighthouseAvailable}>
+        <Grid item sm={4}>
+          <EntityLastLighthouseAuditCard variant="gridItem" />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => Boolean(isGithubPullRequestsAvailable(e))}>
+        <Grid item sm={4}>
+          <EntityGithubPullRequestsOverviewCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
+    <Grid item md={8} xs={12}>
+      <EntityHasSubcomponentsCard variant="gridItem" />
     </Grid>
   </Grid>
 );
 
-const SystemEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<SystemOverviewContent entity={entity as SystemEntity} />}
-    />
-  </EntityPageLayout>
+const serviceEntityPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      {overviewContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/ci-cd" title="CI/CD">
+      {cicdContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/errors" title="Errors">
+      {errorsContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/api" title="API">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item md={6}>
+          <EntityProvidedApisCard />
+        </Grid>
+        <Grid item md={6}>
+          <EntityConsumedApisCard />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/dependencies" title="Dependencies">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item md={6}>
+          <EntityDependsOnComponentsCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityDependsOnResourcesCard variant="gridItem" />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/docs" title="Docs">
+      <EntityTechdocsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/kubernetes" title="Kubernetes">
+      <EntityKubernetesContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/pull-requests" title="Pull Requests">
+      <EntityGithubPullRequestsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/code-insights" title="Code Insights">
+      <EntityGithubInsightsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/code-coverage" title="Code Coverage">
+      <EntityCodeCoverageContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/kafka" title="Kafka">
+      <EntityKafkaContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/todos" title="TODOs">
+      <EntityTodoContent />
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
 );
 
-const DomainOverviewContent = ({ entity }: { entity: DomainEntity }) => (
-  <Grid container spacing={3} alignItems="stretch">
-    <Grid item md={6}>
-      <AboutCard entity={entity} variant="gridItem" />
-    </Grid>
-    <Grid item md={6}>
-      <EntityHasSystemsCard variant="gridItem" />
-    </Grid>
-  </Grid>
+const websiteEntityPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      {overviewContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/ci-cd" title="CI/CD">
+      {cicdContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/lighthouse" title="Lighthouse">
+      <EntityLighthouseContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/errors" title="Errors">
+      {errorsContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/dependencies" title="Dependencies">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item md={6}>
+          <EntityDependsOnComponentsCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityDependsOnResourcesCard variant="gridItem" />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/docs" title="Docs">
+      <EntityTechdocsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/kubernetes" title="Kubernetes">
+      <EntityKubernetesContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/pull-requests" title="Pull Requests">
+      <EntityGithubPullRequestsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/code-insights" title="Code Insights">
+      <EntityGithubInsightsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/code-coverage" title="Code Coverage">
+      <EntityCodeCoverageContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/todos" title="TODOs">
+      <EntityTodoContent />
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
 );
 
-const DomainEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
-    <EntityPageLayout.Content
-      path="/*"
-      title="Overview"
-      element={<DomainOverviewContent entity={entity as DomainEntity} />}
-    />
-  </EntityPageLayout>
+const defaultEntityPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      {overviewContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/docs" title="Docs">
+      <EntityTechdocsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/todos" title="TODOs">
+      <EntityTodoContent />
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
 );
 
-export const EntityPage = () => {
-  const { entity } = useEntity();
+const componentPage = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isComponentType('service')}>
+      {serviceEntityPage}
+    </EntitySwitch.Case>
 
-  switch (entity?.kind?.toLocaleLowerCase('en-US')) {
-    case 'component':
-      return <ComponentEntityPage entity={entity} />;
-    case 'api':
-      return <ApiEntityPage entity={entity} />;
-    case 'group':
-      return <GroupEntityPage entity={entity} />;
-    case 'user':
-      return <UserEntityPage entity={entity} />;
-    case 'system':
-      return <SystemEntityPage entity={entity} />;
-    case 'domain':
-      return <DomainEntityPage entity={entity} />;
-    case 'location':
-    case 'resource':
-    case 'template':
-    default:
-      return <DefaultEntityPage entity={entity} />;
-  }
-};
+    <EntitySwitch.Case if={isComponentType('website')}>
+      {websiteEntityPage}
+    </EntitySwitch.Case>
+
+    <EntitySwitch.Case>{defaultEntityPage}</EntitySwitch.Case>
+  </EntitySwitch>
+);
+
+const apiPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      <Grid container spacing={3}>
+        <Grid item md={6}>
+          <EntityAboutCard />
+        </Grid>
+        <Grid container item md={12}>
+          <Grid item md={6}>
+            <EntityProvidingComponentsCard />
+          </Grid>
+          <Grid item md={6}>
+            <EntityConsumingComponentsCard />
+          </Grid>
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/definition" title="Definition">
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <EntityApiDefinitionCard />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
+);
+
+const userPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <EntityUserProfileCard variant="gridItem" />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <EntityOwnershipCard variant="gridItem" />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
+);
+
+const groupPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <EntityGroupProfileCard variant="gridItem" />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <EntityOwnershipCard variant="gridItem" />
+        </Grid>
+        <Grid item xs={12}>
+          <EntityMembersListCard />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
+);
+
+const systemPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item md={6}>
+          <EntityAboutCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityHasComponentsCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityHasApisCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityHasResourcesCard variant="gridItem" />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/diagram" title="Diagram">
+      <EntitySystemDiagramCard />
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
+);
+
+const domainPage = (
+  <EntityLayoutWrapper>
+    <EntityLayout.Route path="/" title="Overview">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item md={6}>
+          <EntityAboutCard variant="gridItem" />
+        </Grid>
+        <Grid item md={6}>
+          <EntityHasSystemsCard variant="gridItem" />
+        </Grid>
+      </Grid>
+    </EntityLayout.Route>
+  </EntityLayoutWrapper>
+);
+
+export const entityPage = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isKind('component')} children={componentPage} />
+    <EntitySwitch.Case if={isKind('api')} children={apiPage} />
+    <EntitySwitch.Case if={isKind('group')} children={groupPage} />
+    <EntitySwitch.Case if={isKind('user')} children={userPage} />
+    <EntitySwitch.Case if={isKind('system')} children={systemPage} />
+    <EntitySwitch.Case if={isKind('domain')} children={domainPage} />
+
+    <EntitySwitch.Case>{defaultEntityPage}</EntitySwitch.Case>
+  </EntitySwitch>
+);

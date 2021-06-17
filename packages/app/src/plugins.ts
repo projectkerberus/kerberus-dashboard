@@ -1,10 +1,21 @@
-export { plugin as ApiDocs } from '@backstage/plugin-api-docs';
-export { plugin as CatalogPlugin } from '@backstage/plugin-catalog';
-export { plugin as CatalogImport } from '@backstage/plugin-catalog-import';
-export { plugin as GithubActions } from '@backstage/plugin-github-actions';
-export { plugin as ScaffolderPlugin } from '@backstage/plugin-scaffolder';
-export { plugin as TechDocsPlugin } from '@backstage/plugin-techdocs';
-export { plugin as TechRadar } from '@backstage/plugin-tech-radar';
-export { plugin as UserSettings } from '@backstage/plugin-user-settings';
-export { plugin as ArgoCD } from '@roadiehq/backstage-plugin-argo-cd';
-export { plugin as Kubernetes } from '@backstage/plugin-kubernetes';
+/*
+ * Copyright 2020 Spotify AB
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// TODO(Rugvip): This plugin is currently not part of the app element tree,
+//               ideally we have an API for the context menu that permits that.
+export { badgesPlugin } from '@backstage/plugin-badges';
+export { shortcutsPlugin } from '@backstage/plugin-shortcuts';
+export { argocdPlugin } from '@roadiehq/backstage-plugin-argo-cd';

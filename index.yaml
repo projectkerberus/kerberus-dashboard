@@ -1,5 +1,31 @@
 apiVersion: v1
 entries:
+  backstage:
+  - apiVersion: v2
+    appVersion: v0.1.1-alpha.23
+    created: "2021-06-17T13:13:05.211262569Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.4.1
+    description: A Helm chart for Backstage
+    digest: 4095277a5f23bc669ca52a6cb8572c814729b039441ca1d864d173a44f8afa4e
+    maintainers:
+    - email: martina@roadie.io
+      name: Martina Iglesias Fernández
+      url: https://roadie.io
+    - email: david@roadie.io
+      name: David Tuite
+      url: https://roadie.io
+    name: backstage
+    sources:
+    - https://github.com/backstage/backstage
+    - https://github.com/spotify/lighthouse-audit-service
+    type: application
+    urls:
+    - https://github.com/projectkerberus/kerberus-dashboard/releases/download/backstage-0.2.0/backstage-0.2.0.tgz
+    version: 0.2.0
   kerberus-dashboard:
   - apiVersion: v2
     appVersion: v0.1.1-alpha.23
@@ -25,4 +51,4 @@ entries:
     urls:
     - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.0/kerberus-dashboard-0.1.0.tgz
     version: 0.1.0
-generated: "2021-04-09T08:48:39.967694747Z"
+generated: "2021-06-17T13:13:05.211267869Z"

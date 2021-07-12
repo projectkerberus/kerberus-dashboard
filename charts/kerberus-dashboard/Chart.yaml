@@ -13,8 +13,7 @@ version: 0.2.0
 appVersion: v0.1.1-alpha.23
 
 sources:
-  - https://github.com/backstage/backstage
-  - https://github.com/spotify/lighthouse-audit-service
+  - https://github.com/projectkerberus/kerberus-dashboard
 
 dependencies:
   - name: postgresql
@@ -23,9 +22,9 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
 
 maintainers:
-  - name: Martina Iglesias Fernández
-    email: martina@roadie.io
-    url: https://roadie.io
-  - name: David Tuite
-    email: david@roadie.io
-    url: https://roadie.io
+  - name: Bertelli Luca
+    email: luca.bertelli@kiratech.it
+    url: https://www.kiratech.it
+  - name: Braga Diego
+    email: diego.braga@kiratech.it
+    url: https://www.kiratech.it

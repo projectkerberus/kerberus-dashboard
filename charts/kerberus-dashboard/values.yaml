@@ -3,14 +3,13 @@
 # Declare variables to be passed into your templates.
 
 frontend:
-  enabled: false
+  enabled: true
   replicaCount: 1
   image:
-    repository: martinaif/backstage-k8s-demo-frontend
-    tag: test1
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
+    tag: v0.2.0
     pullPolicy: IfNotPresent
-  containerPort: 80
-  serviceType: ClusterIP
+  containerPort: 8080
   resources:
     requests:
       memory: 128Mi
@@ -20,11 +19,11 @@ frontend:
 backend:
   enabled: true
   nodeEnv: development
-  demoData: true
+  demoData: false
   replicaCount: 1
   image:
-    repository: martinaif/backstage-k8s-demo-backend
-    tag: 20210423T1550
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
+    tag: v0.2.0
     pullPolicy: IfNotPresent
   containerPort: 7000
   serviceType: ClusterIP
@@ -73,6 +72,7 @@ issuer:
 global:
   postgresql:
     postgresqlUsername: backend-user
+    postgresqlPassword: backend-user
     caFilename: ca.crt
   nodeSelector: {}
 
@@ -81,18 +81,28 @@ postgresql:
   nameOverride: postgresql
   tls:
     enabled: true
-    certificatesSecret: backstage-postgresql-certs
+    certificatesSecret: kerberus-dashboard-postgresql-certs
     certFilename: tls.crt
     certKeyFilename: tls.key
   volumePermissions:
+    securityContext:
+      runAsUser: 1001
     enabled: true
-  initdbScriptsSecret: backstage-postgresql-initdb
+  initdbScriptsSecret: kerberus-dashboard-postgresql-initdb
 
 appConfig:
   app:
     baseUrl: https://demo.example.com
-    title: Backstage
+    title: Kerberus Dashboard
     googleAnalyticsTrackingId:
+    support:
+      url: https://demo.example.com/issues # Used by common ErrorPage
+      items: # Used by common SupportButton component
+        - title: Issues
+          icon: github
+          links:
+            - url: https://demo.example.com/issues
+              title: GitHub Issues
   backend:
     baseUrl: https://demo.example.com
     listen:
@@ -111,14 +121,14 @@ appConfig:
           rejectUnauthorized: false
           ca:
   sentry:
-    organization: example-org-name
+    organization: project-kerberus
   techdocs:
     storageUrl: https://demo.example.com/api/techdocs/static/docs
     requestUrl: https://demo.example.com/api/techdocs
   lighthouse:
     baseUrl: https://demo.example.com/lighthouse-api
   rollbar:
-    organization: example-org-name
+    organization: Project Kerberus
 
   # Auth config has recently moved into the app config file in upstream Backstage. However,
   # most of this config simply mandates that items like the client id and client secret should
@@ -128,90 +138,79 @@ appConfig:
   # auth.providers.github.development.appOrigin property.
   auth:
     providers:
-      google:
-        development:
-          appOrigin: 'http://localhost:3000/'
-          secure: false
-          clientId: ${AUTH_GOOGLE_CLIENT_ID}
-          clientSecret: ${AUTH_GOOGLE_CLIENT_SECRET}
       github:
         development:
-          appOrigin: 'http://localhost:3000/'
+          appOrigin: https://kerberus-dashboard.example.com
           secure: false
-          clientId: ${AUTH_GITHUB_CLIENT_ID}
-          clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
-          enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
-      gitlab:
-        development:
-          appOrigin: 'http://localhost:3000/'
-          secure: false
-          clientId: ${AUTH_GITLAB_CLIENT_ID}
-          clientSecret: ${AUTH_GITLAB_CLIENT_SECRET}
-          audience: ${GITLAB_BASE_URL}
-      okta:
-        development:
-          appOrigin: 'http://localhost:3000/'
-          secure: false
-          clientId: ${AUTH_OKTA_CLIENT_ID}
-          clientSecret: ${AUTH_OKTA_CLIENT_SECRET}
-          audience: ${AUTH_OKTA_AUDIENCE}
-      oauth2:
-        development:
-          appOrigin: 'http://localhost:3000/'
-          secure: false
-          clientId: ${AUTH_OAUTH2_CLIENT_ID}
-          clientSecret: ${AUTH_OAUTH2_CLIENT_SECRET}
-          authorizationURL: ${AUTH_OAUTH2_AUTH_URL}
-          tokenURL: ${AUTH_OAUTH2_TOKEN_URL}
-      auth0:
-        development:
-          clientId: ${AUTH_AUTH0_CLIENT_ID}
-          clientSecret: ${AUTH_AUTH0_CLIENT_SECRET}
-          domain: ${AUTH_AUTH0_DOMAIN}
-      microsoft:
-        development:
-          clientId: ${AUTH_MICROSOFT_CLIENT_ID}
-          clientSecret: ${AUTH_MICROSOFT_CLIENT_SECRET}
-          tenantId: ${AUTH_MICROSOFT_TENANT_ID}
+          clientId:
+            $env: AUTH_GITHUB_CLIENT_ID
+          clientSecret:
+            $env: AUTH_GITHUB_CLIENT_SECRET
+  
+  proxy:
+    '/argocd/api':
+      # url to the api of your hosted argoCD instance
+      target: https://argocd.example.com
+  
+  catalog:
+    rules:
+      - allow:
+          - Component
+          - API
+          - Resource
+          - Group
+          - User
+          - Template
+          - System
+          - Domain
+          - Location
 
 auth:
   google:
-    clientId: a
-    clientSecret: a
+    clientId: fake-clientid-google
+    clientSecret: fake-clientsecret-google
   github:
-    clientId: c
-    clientSecret: c
+    clientId: fake-clientid-github
+    clientSecret: fake-clientsecret-github
   gitlab:
-    clientId: b
-    clientSecret: b
-    baseUrl: b
+    clientId: fake-clientid-gitlab
+    clientSecret: fake-clientsecret-gitlab
+    baseUrl: fake-baseurl-gitlab
   okta:
-    clientId: b
-    clientSecret: b
-    audience: b
+    clientId: fake-clientid-okta
+    clientSecret: fake-clientsecret-okta
+    audience: fake-audience-okta
   oauth2:
-    clientId: b
-    clientSecret: b
-    authUrl: b
-    tokenUrl: b
+    clientId: fake-clientid-oauth2
+    clientSecret: fake-clientsecret-oauth2
+    authUrl: fake-authurl-oauth2
+    tokenUrl: fake-tokenurl-oauth2
   auth0:
-    clientId: b
-    clientSecret: b
-    domain: b
+    clientId: fake-clientid-auth0
+    clientSecret: fake-clientsecret-auth0
+    domain: fake-domain-auth0
   microsoft:
-    clientId: f
-    clientSecret: f
-    tenantId: f
+    clientId: fake-clientid-microsoft
+    clientSecret: ffake-clientsecret-microsoft
+    tenantId: fake-tenandid-microsoft
   azure:
     api:
-      token: h
-  sentryToken: e
-  rollbarAccountToken: f
+      token: fake-token-azure
+  sentryToken: fake-token-sentry
+  rollbarAccountToken: fake-rollbaraction-token
   # This is a 'Personal Access Token'
-  circleciAuthToken: r
+  circleciAuthToken: fake-circleci-auth-token
   # Used by the scaffolder to create GitHub repos. Must have 'repo' scope.
-  githubToken: g
-  gitlabToken: g
-  newRelicRestApiKey: r
+  githubToken: fake-github-token
+  gitlabToken: fake-gitlab-token
+  newRelicRestApiKey: fake-newrelic-rest-api-key
   travisciAuthToken: fake-travis-ci-auth-token
-  pagerdutyToken: h
+  pagerdutyToken: fake-pagerduty-token
+
+kubernetes:
+  url: https://clusterk8s.example.com:6443
+  token: fake-kubernetes-token
+
+argocd:
+  baseUrl: https://argocd.example.com
+  token: fake-argocd-token

@@ -1,148 +1,282 @@
-<img src="docs/media/square_black_horizontal.svg" width="400">
+# Backstage demo helm charts
 
-# Kerberus Dashboard
+This folder contains Helm charts that can easily create a Kubernetes deployment of a demo Backstage app.
 
-[![Release Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/release.yaml) [![Lint and Test Charts](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml/badge.svg)](https://github.com/projectkerberus/kerberus-dashboard/actions/workflows/ci.yaml)
+### Pre-requisites
 
-## Introduction
+These charts depend on the `nginx-ingress` controller being present in the cluster. If it's not already installed you
+can run:
 
-`Kerberus Dashboard` provides a GUI for the self-service concept provided by Kerberus, including:
-
-* a **service catalog** for managing all your software (microservices, libraries, data pipelines, websites, ML models, etc.)
-* numerous **software templates** for quickly spinning up new projects and standardizing your tooling with your organization’s best practices
-* a **technical documentation** for making it easy to create, maintain, find, and use technical documentation, using a "docs like code" approach
-* a growing ecosystem of **open source plugins** that further expand Kerberus’s customizability and functionality
-
-This application is a monorepo setup with [lerna](https://lerna.js.org/) that includes everything you need to run `Kerberus Dashboard` in your own environment.
-
-`Kerberus Dashboard` is powered by the CNCF sandbox project [Backstage](https://backstage.io/).
-
-<img src="https://raw.githubusercontent.com/cncf/artwork/abe5ed20d03d4b5580af2a8d825c779141959e30/other/cncf/horizontal/color/cncf-color.svg" width="400" />
-
-## Repository layout
-
-```text
-.
-├── README.md
-├── app-config.yaml             Config file
-├── kubernetes
-│   └── kerberus-dashboard      Helm chart
-├── lerna.json
-├── package.json
-├── packages
-│   ├── app                     Frontend workspace
-│   └── backend                 Backend workspace
-└── tsconfig.json
+```shell
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install nginx-ingress ingress-nginx/ingress-nginx
 ```
 
-## Architecture
+### Installing the charts
 
-`Kerberus Dashboard`'s architecture is made up of three main components: the core `Kerberus Dashboard` UI, the UI plugins (and their backing services), and a database for each plugin.
-
-### User Interface
-
-The UI is a thin, *client-side wrapper* around a set of plugins. It provides some core UI components and libraries for shared activities such as configuration management.
-
-Running this architecture in a real environment typically involves the containerization of components.
-
-### Plugins and plugin backends
-
-Each plugin is a *client-side application* which mounts itself on the UI. Plugins are written in TypeScript or JavaScript.
-
-### Databases
-
-The backend and its built-in plugins are based on the [Knex](http://knexjs.org/) library. A separate logical database is set up for each plugin. This provides great isolation and lets the plugins perform migrations and evolve independently of each other.
-
-Although the Knex library supports a number of databases, `Kerberus Dashboard` is currently being tested primarily against two of them: SQLite, which is mainly used as an in-memory mock/test database, and PostgreSQL, which is the preferred production database.
-
-## Requirements
-
-In order to correctly install the platform, some requirements must be installed on your system:
-
-1. [NodeJS](https://nodejs.org/en/)
-2. [YARN](https://yarnpkg.com/)
-3. [Docker](https://docs.docker.com/get-docker/)
-
-
-## Installation
-
-### Obtaining the Docker image
-
-The official Docker image can be downloaded with the following command:
-
-```bash
-docker pull ghcr.io/projectkerberus/kerberus-dashboard:latest
-```
-
-In case you feel brave, you can build your customized Docker image as follows:
-
-```bash
-yarn install
-yarn tsc
-yarn build
-yarn build-image
-```
-
-### Prepare namespace and secrets
-
-Some mandatory environment variables must be set to allow the dashboard to communicate with different components. In particular, the dashboard must be able to talk with:
-
-* the Kubernetes cluster: where services and resources can be deployed
-* ArgoCD: for GitOps pipelines. [Here](https://argoproj.github.io/argo-cd/user-guide/commands/argocd_account_generate-token/) you can find how to generate the token
-* your GitHub account: where repositories that contain definitions for services/resources are managed. You can follow [these instructions](https://roadie.io/blog/github-auth-backstage/) in order to configure it
-
-You can set these environment variables customizing the configuration file `values.yaml`:
+After choosing a DNS name where backstage will be hosted create a yaml file for your custom configuration.
 
 ```yaml
-app:
-  env:
-    argo_token: ...
-    github_client_id: ...
-    github_client_secret: ...
-    github_token: ...
-    k8s_cluster_token: ...
+appConfig:
+  app:
+    baseUrl: https://backstage.mydomain.com
+    title: Backstage
+  backend:
+    baseUrl: https://backstage.mydomain.com
+    cors:
+      origin: https://backstage.mydomain.com
+  lighthouse:
+    baseUrl: https://backstage.mydomain.com/lighthouse-api
+  techdocs:
+    storageUrl: https://backstage.mydomain.com/api/techdocs/static/docs
+    requestUrl: https://backstage.mydomain.com/api/techdocs
 ```
 
-## Install Helm chart
+Then use it to run:
 
-From the `kubernetes/kerberus-dashboard` folder, after customizing `values.yaml`:
-
-```bash
-helm install -f values.yaml kerberus-dashboard ./
+```shell
+git clone https://github.com/backstage/backstage.git
+cd contrib/chart/backstage
+helm dependency update
+helm install -f backstage-mydomain.yaml backstage .
 ```
 
-Or download the official repository:
-```bash
-helm repo add project-kerberus https://projectkerberus.github.io/kerberus-dashboard/
-helm install -f values.yaml project-kerberus/kerberus-dashboard
+This command will deploy the following pieces:
+
+- Backstage frontend
+- Backstage backend with scaffolder and auth plugins
+- (optional) a PostgreSQL instance
+- lighthouse plugin
+- ingress
+
+After a few minutes Backstage should be up and running in your cluster under the DNS specified earlier.
+
+Make sure to create the appropriate DNS entry in your infrastructure. To find the public IP address run:
+
+```shell
+$ kubectl get ingress
+NAME                HOSTS   ADDRESS         PORTS   AGE
+backstage-ingress   *       123.1.2.3       80      17m
 ```
 
-## Upgrade
+> **NOTE**: this is not a production ready deployment.
 
-From the `kubernetes/kerberus-dashboard` folder:
+## Customization
 
-```bash
-helm upgrade -f values.yaml kerberus-dashboard ./
+### Issue certificates
+
+These charts can install or reuse a `clusterIssuer` to generate certificates for the backstage `ingress`. To do that:
+
+1. [Install][install-cert-manager] or make sure [cert-manager][cert-manager] is installed in the cluster.
+2. Enable the issuer in the charts. This will first check if there is a `letsencrypt` issuer already deployed in your
+   cluster and deploy one if it doesn't exist.
+
+To enable it you need to provide a valid email address in the chart's values:
+
+```yaml
+issuer:
+  email: me@example.com
+  clusterIssuer: 'letsencrypt-prod'
 ```
 
-## Uninstall
+By default, the charts use `letsencrypt-staging` so in the above example we instruct helm to use the production issuer
+instead.
 
-```bash
-helm uninstall kerberus-dashboard
+[cert-manager]: https://cert-manager.io/docs/
+[install-cert-manager]: https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
+
+### Custom PostgreSQL instance
+
+Configuring a connection to an existing PostgreSQL instance is possible through the chart's values.
+
+First create a yaml file with the configuration you want to override, for example `backstage-prod.yaml`:
+
+```yaml
+postgresql:
+  enabled: false
+
+appConfig:
+  app:
+    baseUrl: https://backstage-demo.mydomain.com
+    title: Backstage
+  backend:
+    baseUrl: https://backstage-demo.mydomain.com
+    cors:
+      origin: https://backstage-demo.mydomain.com
+    database:
+      client: pg
+      connection:
+        database: backstage_plugin_catalog
+        host: <host>
+        user: <pg user>
+        password: <password>
+  lighthouse:
+    baseUrl: https://backstage-demo.mydomain.com/lighthouse-api
+
+lighthouse:
+  database:
+    client: pg
+    connection:
+      host: <host>
+      user: <pg user>
+      password: <password>
+      database: lighthouse_audit_service
 ```
 
-## Support
+For the CA, create a `configMap` named `<release name>-<chart name>-postgres-ca` with a file called `ca.crt`:
 
-TBD
+```shell
+kubectl create configmap my-company-backstage-postgres-ca --from-file=ca.crt"
+```
 
-## Roadmap
+or disable CA mount
 
-TBD
+```yaml
+backend:
+  postgresCertMountEnabled: false
 
-## Contributing
+lighthouse:
+  postgresCertMountEnabled: false
+```
 
-TBD
+> Where the release name contains the chart name "backstage" then only the release name will be used.
 
-## License
+Now install the helm chart:
 
-TBD
+```shell
+cd contrib/chart/backstage
+helm install -f backstage-prod.yaml my-backstage .
+```
+
+### Use your own docker images
+
+The docker images used for the deployment can be configured through the charts values:
+
+```yaml
+frontend:
+  image:
+    repository: <image-name>
+    tag: <image-tag>
+
+backend:
+  image:
+    repository: <image-name>
+    tag: <image-tag>
+
+lighthouse:
+  image:
+    repository: <image-name>
+    tag: <image-tag>
+```
+
+### Use a private docker repo
+
+Create a docker-registry secret
+
+```shell
+kubectl create secret docker-registry <docker_registry_secret_name> # args
+```
+
+> For private images on docker hub --docker-server can be set to docker.io
+
+Reference the secret in your chart values
+
+```yaml
+dockerRegistrySecretName: <docker_registry_secret_name>
+```
+
+### Different namespace
+
+To install the charts a specific namespace use `--namespace <ns>`:
+
+```shell
+helm install -f my_values.yaml --namespace demos backstage .
+```
+
+### Disable loading of demo data
+
+To deploy backstage with the pre-loaded demo data disable `backend.demoData`:
+
+```shell
+helm install -f my_values.yaml --set backend.demoData=false backstage .
+```
+
+### Other options
+
+For more customization options take a look at the [values.yaml](/contrib/chart/backstage/values.yaml) file.
+
+## Troubleshooting
+
+Some resources created by these charts are meant to survive after upgrades and even after uninstalls. When
+troubleshooting these charts it can be useful to delete these resources between re-installs.
+
+Secrets:
+
+```
+<release-name>-postgresql-certs -- contains the certificates used by the deployed PostgreSQL
+```
+
+Persistent volumes:
+
+```
+data-<release-name>-postgresql-0 -- this is the data volume used by PostgreSQL to store data and configuration
+```
+
+> **NOTE**: this volume also stores the configuration for PostgreSQL which includes things like the password for the
+> `postgres` user. This means that uninstalling and re-installing the charts with `postgres.enabled` set to `true` and
+> auto generated passwords will fail. The solution is to delete this volume with
+> `kubectl delete pvc data-<release-name>-postgresql-0`
+
+ConfigMaps:
+
+```
+<release-name>-postgres-ca -- contains the generated CA certificate for PostgreSQL when `postgres` is enabled
+```
+
+#### Unable to verify signature
+
+```
+Backend failed to start up Error: unable to verify the first certificate
+    at TLSSocket.onConnectSecure (_tls_wrap.js:1501:34)
+    at TLSSocket.emit (events.js:315:20)
+    at TLSSocket._finishInit (_tls_wrap.js:936:8)
+    at TLSWrap.ssl.onhandshakedone (_tls_wrap.js:710:12) {
+  code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'
+```
+
+This error happens in the backend when it tries to connect to the configured PostgreSQL database and the specified CA is not correct. The solution is to make sure that the contents of the `configMap` that holds the certificate match the CA for the PostgreSQL instance. A workaround is to set `appConfig.backend.database.connection.ssl.rejectUnauthorized` to `false` in the chart's values.
+
+#### Multi-Platform Kubernetes Services
+
+If you are running a multi-platform Kubernetes service with Windows and Linux nodes then you will need to apply a `nodeSelector` to the Helm chart to ensure that pods are scheduled onto the correct platform nodes.
+
+Add the following to your Helm values file:
+
+```yaml
+global:
+  nodeSelector:
+    kubernetes.io/os: linux
+
+# If using Postgres Chart also add
+postgresql:
+  master:
+    nodeSelector:
+      kubernetes.io/os: linux
+  slave:
+    nodeSelector:
+      kubernetes.io/os: linux
+```
+
+<!-- TODO Add example command when we know the final name of the charts -->
+
+## Uninstalling Backstage
+
+To uninstall Backstage simply run:
+
+```shell
+RELEASE_NAME=<release-name> # use `helm list` to find out the name
+helm uninstall ${RELEASE_NAME}
+kubectl delete pvc data-${RELEASE_NAME}-postgresql-0
+kubectl delete secret ${RELEASE_NAME}-postgresql-certs
+kubectl delete configMap ${RELEASE_NAME}-postgres-ca
+```

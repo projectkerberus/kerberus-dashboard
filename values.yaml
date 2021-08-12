@@ -7,7 +7,7 @@ frontend:
   replicaCount: 1
   image:
     repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
-    tag: v0.2.0
+    tag: 1.0.15
     pullPolicy: IfNotPresent
   containerPort: 8080
   resources:
@@ -23,7 +23,7 @@ backend:
   replicaCount: 1
   image:
     repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
-    tag: v0.2.0
+    tag: 1.0.3
     pullPolicy: IfNotPresent
   containerPort: 7000
   serviceType: ClusterIP
@@ -58,8 +58,8 @@ lighthouse:
       database: lighthouse_audit_service
     pathToDatabaseCa:
 
-nameOverride: ''
-fullnameOverride: ''
+nameOverride: ""
+fullnameOverride: ""
 
 ingress:
   annotations:
@@ -67,7 +67,7 @@ ingress:
 
 issuer:
   email:
-  clusterIssuer: 'letsencrypt-staging'
+  clusterIssuer: "letsencrypt-staging"
 
 global:
   postgresql:
@@ -140,34 +140,34 @@ appConfig:
     providers:
       google:
         development:
-          appOrigin: 'https://kerberus-dashboard.example.com'
+          appOrigin: "https://kerberus-dashboard.example.com"
           secure: false
           clientId: ${AUTH_GOOGLE_CLIENT_ID}
           clientSecret: ${AUTH_GOOGLE_CLIENT_SECRET}
       github:
         development:
-          appOrigin: 'https://kerberus-dashboard.example.com'
+          appOrigin: "https://kerberus-dashboard.example.com"
           secure: false
           clientId: ${AUTH_GITHUB_CLIENT_ID}
           clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
           enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
       gitlab:
         development:
-          appOrigin: 'https://kerberus-dashboard.example.com'
+          appOrigin: "https://kerberus-dashboard.example.com"
           secure: false
           clientId: ${AUTH_GITLAB_CLIENT_ID}
           clientSecret: ${AUTH_GITLAB_CLIENT_SECRET}
           audience: ${GITLAB_BASE_URL}
       okta:
         development:
-          appOrigin: 'https://kerberus-dashboard.example.com'
+          appOrigin: "https://kerberus-dashboard.example.com"
           secure: false
           clientId: ${AUTH_OKTA_CLIENT_ID}
           clientSecret: ${AUTH_OKTA_CLIENT_SECRET}
           audience: ${AUTH_OKTA_AUDIENCE}
       oauth2:
         development:
-          appOrigin: 'https://kerberus-dashboard.example.com'
+          appOrigin: "https://kerberus-dashboard.example.com"
           secure: false
           clientId: ${AUTH_OAUTH2_CLIENT_ID}
           clientSecret: ${AUTH_OAUTH2_CLIENT_SECRET}
@@ -183,12 +183,12 @@ appConfig:
           clientId: ${AUTH_MICROSOFT_CLIENT_ID}
           clientSecret: ${AUTH_MICROSOFT_CLIENT_SECRET}
           tenantId: ${AUTH_MICROSOFT_TENANT_ID}
-  
+
   proxy:
-    '/argocd/api':
+    "/argocd/api":
       # url to the api of your hosted argoCD instance
       target: https://argocd.example.com
-  
+
   catalog:
     rules:
       - allow:

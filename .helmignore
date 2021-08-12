@@ -1,0 +1,28 @@
+_tmp
+docs
+files
+README.md
+todo.txt
+values-dashboard-minikube.yaml
+
+
+.DS_Store
+# Common VCS dirs
+.gitignore
+.bzr/
+.bzrignore
+.hg/
+.hgignore
+.svn/
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*~
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/
+
+*.log

@@ -2,7 +2,7 @@ apiVersion: v2
 name: kerberus-dashboard
 description: Kerberus Dashboard provides a GUI for the self-service concept provided by Kerberus Project
 type: application
-icon: "https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png"
+icon: 'https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png'
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
@@ -12,14 +12,14 @@ version: 0.2.0
 # incremented each time you make changes to the application.
 appVersion: v0.1.1-alpha.23
 
-sources:
-  - https://github.com/projectkerberus/kerberus-dashboard
+# sources:
+#   - https://github.com/projectkerberus/kerberus-dashboard
 
-dependencies:
-  - name: postgresql
-    condition: postgresql.enabled
-    version: 9.4.1
-    repository: https://charts.bitnami.com/bitnami
+# dependencies:
+#   - name: postgresql
+#     condition: postgresql.enabled
+#     version: 9.4.1
+#     repository: https://charts.bitnami.com/bitnami
 
 maintainers:
   - name: Bertelli Luca

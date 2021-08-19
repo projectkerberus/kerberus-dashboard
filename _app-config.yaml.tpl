@@ -142,12 +142,12 @@ catalog:
     # Backstage example templates
     - type: github
       target: https://github.com/backstage/backstage/blob/master/plugins/scaffolder-backend/sample-templates/all-templates.yaml
-{{- else }}
-  locations:
     - type: url
       target: https://github.com/projectkerberus/gcp-stack-template/blob/main/template-beta.yaml
       rules:
         - allow: [Template]
+{{- else }}
+  locations: []
 {{- end }}
 
 kubernetes:

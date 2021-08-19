@@ -27,13 +27,14 @@ backend:
   cache:
     store: memory
 
-'/argocd/api':
-    target: {{ .Values.argocd.baseUrl }}
-    changeOrigin: true
-    secure: false
-    headers:
-      Cookie:
-        $env: ARGOCD_AUTH_TOKEN
+proxy:
+  '/argocd/api':
+      target: {{ .Values.argocd.baseUrl }}
+      changeOrigin: true
+      secure: false
+      headers:
+        Cookie:
+          $env: ARGOCD_AUTH_TOKEN
 
 integrations:
   github:

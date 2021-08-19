@@ -1,0 +1,176 @@
+###########################
+#     Global Settings     #
+###########################
+organization: "Kiratech"
+frontendUrl: https://kerberus-dashboard.test.io
+backendUrl: https://kerberus-dashboard.test.io
+lighthouseUrl: https://kerberus-dashboard.test.io/lighthouse-api
+
+###########################
+#      Global & k8s       #
+###########################
+global:
+  postgresql:
+    postgresqlUsername: backend-user
+    postgresqlPassword: backend-pass
+  nodeSelector: {}
+
+serviceAccount:
+  enabled: true
+
+issuer:
+  email:
+  clusterIssuer: "letsencrypt-staging"
+
+###########################
+#   Frontend Deployment   #
+###########################
+frontend:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-frontend
+    tag: 1.0.20
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 2048Mi
+  service:
+    type: ClusterIP
+
+###########################
+#   Backend Deployment    #
+###########################
+backend:
+  enabled: true
+  demoData: false
+  replicaCount: 1
+  image:
+    repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
+    tag: 1.0.4
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: 512Mi
+    limits:
+      memory: 1024Mi
+  service:
+    type: ClusterIP
+
+lighthouse:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: roadiehq/lighthouse-audit-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  containerPort: 3003
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  database:
+    connection:
+      port:
+      host:
+      user:
+      password:
+      database: lighthouse_audit_service
+    pathToDatabaseCa:
+
+###########################
+#         Ingress         #
+###########################
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+
+###########################
+#       PostgreSQL        #
+###########################
+postgresql:
+  enabled: true
+
+###########################
+#         ArgoCD          #
+###########################
+argocd:
+  baseUrl: http://argocd.test.io
+  token: argocd.token=<token>
+
+###########################
+#         Kerberus        #
+###########################
+appConfig:
+  app:
+    googleAnalyticsTrackingId:
+
+  backend:
+    ssl:
+      rejectUnauthorized: false
+      ca:
+    database:
+      connection:
+        ssl:
+          rejectUnauthorized: false
+          ca:
+  # sentry:
+  #   organization: Project Kerberus
+  # rollbar:
+  #   organization: Project Kerberus
+
+kubernetes:
+  url: http://192.168.99.129:6443
+  token: a
+
+providers:
+  github:
+    clientId: <clientId>
+    clientSecret: <clientSecret>
+    token: <token>
+  google:
+    clientId: a
+    clientSecret: a
+  gitlab:
+    clientId: b
+    clientSecret: b
+    baseUrl: b
+    token: x
+  okta:
+    clientId: b
+    clientSecret: b
+    audience: b
+  oauth2:
+    clientId: b
+    clientSecret: b
+    authUrl: b
+    tokenUrl: b
+  auth0:
+    clientId: b
+    clientSecret: b
+    domain: b
+  microsoft:
+    clientId: f
+    clientSecret: f
+    tenantId: f
+  azure:
+    api:
+      token: h
+  sentry:
+    token: e
+  rollbar:
+    accountToken: f
+  circleci:
+    authToken: r
+  newRelic:
+    restApiKey: r
+  travisci:
+    authToken: fake-travis-ci-auth-token
+  pagerduty:
+    token: h

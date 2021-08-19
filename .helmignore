@@ -1,9 +1,7 @@
-_tmp
 docs
 files
 README.md
 todo.txt
-values-dashboard-minikube.yaml
 
 
 .DS_Store
@@ -24,5 +22,5 @@ values-dashboard-minikube.yaml
 .idea/
 *.tmproj
 .vscode/
-
+.git
 *.log

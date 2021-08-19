@@ -1,28 +1,21 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "backstage.fullname" . }}-app-config
+  name: {{ include "kerberus.name" . }}-app-config
 data:
-{{ include "backstage.appConfigFilename" . | indent 2 }}: |
-{{ tpl (.Files.Get "files/app-config.development.yaml.tpl") . | indent 4 }}
+{{ include "kerberus.appConfigFilename" . | indent 2 }}: |
+{{ tpl (.Files.Get "_app-config.yaml.tpl") . | indent 4 }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "backstage.fullname" . }}-app-env
+  name: {{ include "kerberus.name" . }}-app-env
 data:
-  APP_CONFIG_app_baseUrl: {{ .Values.appConfig.app.baseUrl | quote | quote }}
-  APP_CONFIG_app_title: {{ .Values.appConfig.app.title | quote | quote }}
-  APP_CONFIG_app_googleAnalyticsTrackingId: {{ .Values.appConfig.app.googleAnalyticsTrackingId | quote | quote }}
-  APP_CONFIG_backend_baseUrl: {{ .Values.appConfig.backend.baseUrl | quote | quote }}
-  APP_CONFIG_backend_cors_origin: {{ .Values.appConfig.backend.cors.origin | quote | quote }}
-  APP_CONFIG_techdocs_storageUrl: {{ .Values.appConfig.techdocs.storageUrl | quote | quote }}
-  APP_CONFIG_techdocs_requestUrl: {{ .Values.appConfig.techdocs.requestUrl | quote | quote }}
-  APP_CONFIG_lighthouse_baseUrl: {{ .Values.appConfig.lighthouse.baseUrl | quote | quote }}
-  APP_CONFIG_backend_database_connection_ssl_rejectUnauthorized: "false"
-  APP_CONFIG_auth_providers_github_development_appOrigin: {{ .Values.appConfig.auth.providers.github.development.appOrigin | quote | quote }}
-  APP_CONFIG_auth_providers_google_development_appOrigin: {{ .Values.appConfig.auth.providers.google.development.appOrigin | quote | quote }}
-  APP_CONFIG_auth_providers_gitlab_development_appOrigin: {{ .Values.appConfig.auth.providers.gitlab.development.appOrigin | quote | quote }}
-  APP_CONFIG_auth_providers_okta_development_appOrigin: {{ .Values.appConfig.auth.providers.okta.development.appOrigin | quote | quote }}
-  APP_CONFIG_auth_providers_oauth2_development_appOrigin: {{ .Values.appConfig.auth.providers.oauth2.development.appOrigin | quote | quote }}
+  APP_CONFIG_techdocs_storageUrl: "{{ .Values.backendUrl }}/api/techdocs/static/docs"
+  APP_CONFIG_techdocs_requestUrl: "{{ .Values.backendUrl }}/api/techdocs"
+  APP_CONFIG_auth_providers_github_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}
+  APP_CONFIG_auth_providers_google_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}
+  APP_CONFIG_auth_providers_gitlab_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}
+  APP_CONFIG_auth_providers_okta_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}
+  APP_CONFIG_auth_providers_oauth2_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}
 

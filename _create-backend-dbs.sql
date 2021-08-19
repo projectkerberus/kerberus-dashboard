@@ -1,4 +1,4 @@
-{{ $backendDb := .Values.appConfig.backend.database.connection.database }}
+{{ $backendDb := .Values.postgresql.database }}
 {{ $lighthouseDb := .Values.lighthouse.database.connection.database }}
 {{ $user := .Values.global.postgresql.postgresqlUsername }}
 

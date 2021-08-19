@@ -1,2 +1,5 @@
-values-dashboard-minikube.yaml
+.DS_Store
+_values.yaml
+_values.minikube.yaml
 todo.txt
+charts

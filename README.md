@@ -1,6 +1,6 @@
-# Backstage demo helm charts
+# Project Kerberus demo helm charts
 
-This folder contains Helm charts that can easily create a Kubernetes deployment of a demo Backstage app.
+This folder contains Helm charts that can easily create a Kubernetes deployment of a demo Project Kerberus app.
 
 ### Pre-requisites
 
@@ -11,52 +11,46 @@ can run:
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm install nginx-ingress ingress-nginx/ingress-nginx
 ```
+or
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.48.1/deploy/static/provider/cloud/deploy.yaml
+```
 
 ### Installing the charts
 
-After choosing a DNS name where backstage will be hosted create a yaml file for your custom configuration.
+Create values.yaml
 
 ```yaml
-appConfig:
-  app:
-    baseUrl: https://backstage.mydomain.com
-    title: Backstage
-  backend:
-    baseUrl: https://backstage.mydomain.com
-    cors:
-      origin: https://backstage.mydomain.com
-  lighthouse:
-    baseUrl: https://backstage.mydomain.com/lighthouse-api
-  techdocs:
-    storageUrl: https://backstage.mydomain.com/api/techdocs/static/docs
-    requestUrl: https://backstage.mydomain.com/api/techdocs
+organization: "Kiratech"
+frontendUrl: https://kerberus-dashboard.test.io
+backendUrl: https://kerberus-dashboard.test.io
+lighthouseUrl: https://kerberus-dashboard.test.io/lighthouse-api
 ```
 
 Then use it to run:
 
 ```shell
-git clone https://github.com/backstage/backstage.git
-cd contrib/chart/backstage
+git clone https://github.com/projectkerberus/kerberus-dashboard.git
 helm dependency update
-helm install -f backstage-mydomain.yaml backstage .
+helm install -f values.yaml kerberus .
 ```
 
 This command will deploy the following pieces:
 
-- Backstage frontend
-- Backstage backend with scaffolder and auth plugins
+- Project Kerberus frontend
+- Project Kerberus backend with scaffolder and auth plugins
 - (optional) a PostgreSQL instance
 - lighthouse plugin
 - ingress
 
-After a few minutes Backstage should be up and running in your cluster under the DNS specified earlier.
+After a few minutes Project Kerberus should be up and running in your cluster under the DNS specified earlier.
 
 Make sure to create the appropriate DNS entry in your infrastructure. To find the public IP address run:
 
 ```shell
 $ kubectl get ingress
-NAME                HOSTS   ADDRESS         PORTS   AGE
-backstage-ingress   *       123.1.2.3       80      17m
+NAME                              HOSTS   ADDRESS         PORTS        AGE
+kerberus-<Release Name>-ingress   *       123.1.2.3       80, 443      6m
 ```
 
 > **NOTE**: this is not a production ready deployment.
@@ -65,7 +59,7 @@ backstage-ingress   *       123.1.2.3       80      17m
 
 ### Issue certificates
 
-These charts can install or reuse a `clusterIssuer` to generate certificates for the backstage `ingress`. To do that:
+These charts can install or reuse a `clusterIssuer` to generate certificates for the Project Kerberus `ingress`. To do that:
 
 1. [Install][install-cert-manager] or make sure [cert-manager][cert-manager] is installed in the cluster.
 2. Enable the issuer in the charts. This will first check if there is a `letsencrypt` issuer already deployed in your
@@ -89,63 +83,23 @@ instead.
 
 Configuring a connection to an existing PostgreSQL instance is possible through the chart's values.
 
-First create a yaml file with the configuration you want to override, for example `backstage-prod.yaml`:
+First create a yaml file with the configuration you want to override, for example `kerberus-prod.yaml`:
 
 ```yaml
 postgresql:
   enabled: false
+  host: <host>
 
-appConfig:
-  app:
-    baseUrl: https://backstage-demo.mydomain.com
-    title: Backstage
-  backend:
-    baseUrl: https://backstage-demo.mydomain.com
-    cors:
-      origin: https://backstage-demo.mydomain.com
-    database:
-      client: pg
-      connection:
-        database: backstage_plugin_catalog
-        host: <host>
-        user: <pg user>
-        password: <password>
-  lighthouse:
-    baseUrl: https://backstage-demo.mydomain.com/lighthouse-api
-
-lighthouse:
-  database:
-    client: pg
-    connection:
-      host: <host>
-      user: <pg user>
-      password: <password>
-      database: lighthouse_audit_service
+global:
+  postgresql:
+    postgresqlUsername: <username>
+    postgresqlPassword: <password>
 ```
-
-For the CA, create a `configMap` named `<release name>-<chart name>-postgres-ca` with a file called `ca.crt`:
-
-```shell
-kubectl create configmap my-company-backstage-postgres-ca --from-file=ca.crt"
-```
-
-or disable CA mount
-
-```yaml
-backend:
-  postgresCertMountEnabled: false
-
-lighthouse:
-  postgresCertMountEnabled: false
-```
-
-> Where the release name contains the chart name "backstage" then only the release name will be used.
 
 Now install the helm chart:
 
 ```shell
-cd contrib/chart/backstage
-helm install -f backstage-prod.yaml my-backstage .
+helm install -f kerberus-prod.yaml prod-kerberus .
 ```
 
 ### Use your own docker images
@@ -190,20 +144,20 @@ dockerRegistrySecretName: <docker_registry_secret_name>
 To install the charts a specific namespace use `--namespace <ns>`:
 
 ```shell
-helm install -f my_values.yaml --namespace demos backstage .
+helm install -f my_values.yaml --namespace demos kerberus .
 ```
 
 ### Disable loading of demo data
 
-To deploy backstage with the pre-loaded demo data disable `backend.demoData`:
+To deploy Project Kerberus with the pre-loaded demo data disable `backend.demoData`:
 
 ```shell
-helm install -f my_values.yaml --set backend.demoData=false backstage .
+helm install -f my_values.yaml --set backend.demoData=false kerberus .
 ```
 
 ### Other options
 
-For more customization options take a look at the [values.yaml](/contrib/chart/backstage/values.yaml) file.
+For more customization options take a look at the [values.local.yaml](values.local.yaml) file.
 
 ## Troubleshooting
 
@@ -233,19 +187,6 @@ ConfigMaps:
 <release-name>-postgres-ca -- contains the generated CA certificate for PostgreSQL when `postgres` is enabled
 ```
 
-#### Unable to verify signature
-
-```
-Backend failed to start up Error: unable to verify the first certificate
-    at TLSSocket.onConnectSecure (_tls_wrap.js:1501:34)
-    at TLSSocket.emit (events.js:315:20)
-    at TLSSocket._finishInit (_tls_wrap.js:936:8)
-    at TLSWrap.ssl.onhandshakedone (_tls_wrap.js:710:12) {
-  code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'
-```
-
-This error happens in the backend when it tries to connect to the configured PostgreSQL database and the specified CA is not correct. The solution is to make sure that the contents of the `configMap` that holds the certificate match the CA for the PostgreSQL instance. A workaround is to set `appConfig.backend.database.connection.ssl.rejectUnauthorized` to `false` in the chart's values.
-
 #### Multi-Platform Kubernetes Services
 
 If you are running a multi-platform Kubernetes service with Windows and Linux nodes then you will need to apply a `nodeSelector` to the Helm chart to ensure that pods are scheduled onto the correct platform nodes.
@@ -269,9 +210,9 @@ postgresql:
 
 <!-- TODO Add example command when we know the final name of the charts -->
 
-## Uninstalling Backstage
+## Uninstalling Project Kerberus
 
-To uninstall Backstage simply run:
+To uninstall Project Kerberus simply run:
 
 ```shell
 RELEASE_NAME=<release-name> # use `helm list` to find out the name

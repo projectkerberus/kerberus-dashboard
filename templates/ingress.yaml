@@ -1,10 +1,11 @@
-{{- $frontendUrl := urlParse .Values.appConfig.app.baseUrl}}
-{{- $backendUrl := urlParse .Values.appConfig.backend.baseUrl}}
-{{- $lighthouseUrl := urlParse .Values.appConfig.lighthouse.baseUrl}}
+{{- if .Values.ingress.enabled }}
+{{- $frontendUrl := urlParse .Values.frontendUrl}}
+{{- $backendUrl := urlParse .Values.backendUrl}}
+{{- $lighthouseUrl := urlParse .Values.lighthouseUrl}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "backstage.fullname" . }}-ingress
+  name: {{ include "kerberus.name" . }}-ingress
   annotations:
     {{- if .Values.issuer.email }}
     cert-manager.io/cluster-issuer: {{ .Values.issuer.clusterIssuer }}
@@ -18,7 +19,7 @@ metadata:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   tls:
-    - secretName: {{ include "backstage.fullname" . }}-tls
+    - secretName: {{ include "kerberus.name" . }}-tls
       hosts:
         - {{ $frontendUrl.host }}
         - {{ $backendUrl.host }}
@@ -29,24 +30,34 @@ spec:
       http:
         paths:
           - path: /
+            pathType: "Prefix"
             backend:
-              serviceName: {{ include "frontend.serviceName" . }}
-              servicePort: 80
+              service:
+                name: {{ include "frontend.serviceName" . }}
+                port:
+                  number: 80
+              
           {{/* Route the backend inside the same hostname as the frontend when they are the same */}}
           {{- if eq $frontendUrl.host $backendUrl.host}}
           - path: /api
+            pathType: "Prefix"
             backend:
-              serviceName: {{ include "backend.serviceName" . }}
-              servicePort: 80
+              service:
+                name: {{ include "backend.serviceName" . }}
+                port:
+                  number: 80
           {{/* Route the backend through a different host */}}
           {{- else -}}
     - host: {{ $backendUrl.host }}
       http:
         paths:
           - path: {{ $backendUrl.path | default "/" }}
+            pathType: "Prefix"
             backend:
-              serviceName: {{ include "backend.serviceName" . }}
-              servicePort: 80
+              service:
+                name: {{ include "backend.serviceName" . }}
+                port:
+                  number: 80
          {{- end }}
 
 {{/* Route lighthouse through a different host */}}
@@ -55,16 +66,19 @@ spec:
       http:
         paths:
           - path: {{ $lighthouseUrl.path | default "/" }}
+            pathType: "Prefix"
             backend:
-              serviceName: {{ include "lighthouse.serviceName" . }}
-              servicePort: 80
+              service:
+                name: {{ include "lighthouse.serviceName" . }}
+                port:
+                  number: 80
 {{- else }}
 {{/* Route lighthouse by path with re-write rules when it is hosted under the same hostname */}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "backstage.fullname" . }}-ingress-lighthouse
+  name: {{ include "kerberus.name" . }}-ingress-lighthouse
   annotations:
     {{- if .Values.issuer.email }}
     cert-manager.io/cluster-issuer: {{ .Values.issuer.clusterIssuer }}
@@ -78,7 +92,7 @@ metadata:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   tls:
-    - secretName: {{ include "backstage.fullname" . }}-tls
+    - secretName: {{ include "kerberus.name" . }}-tls
       hosts:
         - {{ $lighthouseUrl.host }}
   rules:
@@ -86,7 +100,11 @@ spec:
       http:
         paths:
           - path: {{$lighthouseUrl.path}}(/|$)(.*)
+            pathType: "Prefix"
             backend:
-              serviceName: {{ include "lighthouse.serviceName" . }}
-              servicePort: 80
+              service:
+                name: {{ include "lighthouse.serviceName" . }}
+                port:
+                  number: 80
+{{- end }}
 {{- end }}

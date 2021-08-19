@@ -1,8 +1,8 @@
-{{- if .Values.lighthouse.enabled }}
+{{- if .Values.lighthouse.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "backstage.fullname" . }}-lighthouse
+  name: {{ include "kerberus.name" . }}-lighthouse
 
 spec:
   replicas: {{ .Values.lighthouse.replicaCount }}
@@ -21,10 +21,10 @@ spec:
         component: lighthouse-audit-service
 
     spec:
-      {{- if .Values.dockerRegistrySecretName }}
+      {{- if .Values.dockerRegistrySecretName -}}
       imagePullSecrets:
         - name: {{ .Values.dockerRegistrySecretName }}
-      {{- end}}
+      {{- end -}}
       containers:
         - name: lighthouse-audit-service
           image: {{ .Values.lighthouse.image.repository }}:{{ .Values.lighthouse.image.tag }}
@@ -32,13 +32,13 @@ spec:
           ports:
             - containerPort: {{ .Values.lighthouse.containerPort }}
           resources:
-            {{- toYaml .Values.lighthouse.resources | nindent 12 }}
+            {{- toYaml .Values.lighthouse.resources | nindent 12 -}}
 
           envFrom:
             - configMapRef:
-                name: {{ include "backstage.fullname" . -}}-lighthouse
+                name: {{ include "kerberus.name" . }}-lighthouse
             - configMapRef:
-                name: {{ include "backstage.fullname" . }}-app-env
+                name: {{ include "kerberus.name" . }}-app-env
 
           env:
             - name: LAS_PORT
@@ -48,25 +48,25 @@ spec:
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "lighthouse.postgresql.passwordSecret" . }}
+                  name: {{ include "postgresql.secretName" . }}
                   key: postgresql-password
 
-          {{- if .Values.lighthouse.postgresCertMountEnabled }}
+          {{- if .Values.lighthouse.postgresCertMountEnabled -}}
           volumeMounts:
             - name: postgres-ca
-              mountPath: {{ include "backstage.lighthouse.postgresCaDir" . }}
-          {{- end }}
+              mountPath: {{ include "kerberus.lighthouse.postgresCaDir" . }}
+          {{- end -}}
 
-      {{- if .Values.lighthouse.postgresCertMountEnabled }}
-      volumes:
-        - name: postgres-ca
-          configMap:
-            name: {{ include "backstage.fullname" . }}-postgres-ca
-      {{- end }}
+      # {{- if .Values.lighthouse.postgresCertMountEnabled -}}
+      # volumes:
+      #   - name: postgres-ca
+      #     configMap:
+      #       name: {{ .Values.prefix }}-postgres-ca
+      # {{- end -}}
 
-      {{- if .Values.global.nodeSelector }}
-      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}
-      {{- end }}
+      {{- if .Values.global.nodeSelector -}}
+      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 -}}
+      {{- end -}}
 ---
 apiVersion: v1
 kind: Service
@@ -83,4 +83,4 @@ spec:
     component: lighthouse-audit-service
 
   type: {{ .Values.lighthouse.serviceType }}
-{{- end }}
+{{- end -}}

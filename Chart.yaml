@@ -6,20 +6,20 @@ icon: 'https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/medi
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.2.0
+version: 0.3.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: v0.1.1-alpha.23
+appVersion: 0.2.0
 
 # sources:
 #   - https://github.com/projectkerberus/kerberus-dashboard
 
-# dependencies:
-#   - name: postgresql
-#     condition: postgresql.enabled
-#     version: 9.4.1
-#     repository: https://charts.bitnami.com/bitnami
+dependencies:
+  - name: postgresql
+    condition: postgresql.enabled
+    version: 10.9.2
+    repository: https://charts.bitnami.com/bitnami
 
 maintainers:
   - name: Bertelli Luca

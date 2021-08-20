@@ -2,7 +2,7 @@
 {{- $frontendUrl := urlParse .Values.frontendUrl}}
 {{- $backendUrl := urlParse .Values.backendUrl}}
 {{- $lighthouseUrl := urlParse .Values.lighthouseUrl}}
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ include "kerberus.name" . }}-ingress

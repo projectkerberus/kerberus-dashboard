@@ -11,7 +11,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "kerberus.name" . }}-app-env
 data:
-  KERBERUS_ARGOCD: "{{ .Values.argocd.baseUrl }}"
   APP_CONFIG_techdocs_storageUrl: "{{ .Values.backendUrl }}/api/techdocs/static/docs"
   APP_CONFIG_techdocs_requestUrl: "{{ .Values.backendUrl }}/api/techdocs"
   APP_CONFIG_auth_providers_github_development_appOrigin: {{ .Values.frontendUrl | quote | quote }}

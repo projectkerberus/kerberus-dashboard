@@ -134,7 +134,7 @@ kubernetes:
   token: a
 
 providers:
-  guest: true
+  guest: "true"
   github:
     clientId: <clientId>
     clientSecret: <clientSecret>

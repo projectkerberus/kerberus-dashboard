@@ -20,10 +20,10 @@ spec:
         component: backend
 
     spec:
-      {{- if .Values.dockerRegistrySecretName }}
+      {{- if .Values.dockerRegistrySecretName -}}
       imagePullSecrets:
         - name: {{ .Values.dockerRegistrySecretName }}
-      {{- end}}
+      {{- end -}}
       containers:
         - name: {{ .Chart.Name }}-backend
           image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
@@ -31,7 +31,7 @@ spec:
           ports:
             - containerPort: 7000
           resources:
-          {{- toYaml .Values.backend.resources | nindent 12 }}
+          {{- toYaml .Values.backend.resources | nindent 12 -}}
 
           envFrom:
             - secretRef:
@@ -58,11 +58,11 @@ spec:
           configMap:
             name: {{ include "kerberus.name" . }}-app-config
 
-      {{- if .Values.global.nodeSelector }}
-      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}
-      {{- end }}
+      {{- if .Values.global.nodeSelector -}}
+      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 -}}
+      {{- end -}}
 
-{{- if .Values.backend.enabled }}
+{{- if .Values.backend.enabled -}}
 ---
 apiVersion: v1
 kind: Service
@@ -79,4 +79,4 @@ spec:
     component: backend
 
   type: {{ .Values.backend.serviceType }}
-{{- end }}
+{{- end -}}

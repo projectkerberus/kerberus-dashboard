@@ -35,6 +35,11 @@ proxy:
       headers:
         Cookie:
           $env: ARGOCD_AUTH_TOKEN
+  '/sonarqube':
+    target: https://sonarcloud.io/api
+    allowedMethods: ['GET']
+    headers:
+      Authorization: Basic ${SONARQUBE_AUTH}
 
 integrations:
   github:
@@ -60,6 +65,7 @@ techdocs:
 
 auth:
   providers:
+    guest: ${AUTH_GUEST}
     google:
       development:
         clientId: ${AUTH_GOOGLE_CLIENT_ID}
@@ -117,6 +123,9 @@ auth:
         clientId: ${AUTH_ONELOGIN_CLIENT_ID}
         clientSecret: ${AUTH_ONELOGIN_CLIENT_SECRET}
         issuer: ${AUTH_ONELOGIN_ISSUER}
+    saml:
+      entryPoint: ${AUTH_SAML_ENTRY_POINT}
+      issuer: ${AUTH_SAML_ISSUER}
 
 scaffolder:
   github:
@@ -126,6 +135,29 @@ scaffolder:
 catalog:
   rules:
     - allow: [Component, System, API, Group, User, Resource, Location]
+  processors:
+    ldapOrg:
+      providers:
+        - target: ldaps://ds.example.net
+          bind:
+            dn: uid=ldap-reader-user,ou=people,ou=example,dc=example,dc=net
+            secret: ${LDAP_SECRET}
+          users:
+            dn: ou=people,ou=example,dc=example,dc=net
+            options:
+              filter: (uid=*)
+            map:
+              description: l
+            set:
+              metadata.customField: 'hello'
+          groups:
+            dn: ou=access,ou=groups,ou=example,dc=example,dc=net
+            options:
+              filter: (&(objectClass=some-group-class)(!(groupType=email)))
+            map:
+              description: l
+            set:
+              metadata.customField: 'hello'
 {{- if .Values.backend.demoData }}
   locations:
     # Backstage example components

@@ -21,10 +21,10 @@ spec:
         component: frontend
 
     spec:
-      {{- if .Values.dockerRegistrySecretName -}}
+      {{- if .Values.dockerRegistrySecretName }}
       imagePullSecrets:
         - name: {{ .Values.dockerRegistrySecretName }}
-      {{- end -}}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-frontend
           image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
@@ -32,7 +32,7 @@ spec:
           ports:
             - containerPort: 8080
           resources:
-            {{- toYaml .Values.frontend.resources | nindent 12 -}}
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
           env:
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
@@ -49,9 +49,9 @@ spec:
         - name: app-config
           configMap:
             name: {{ include "kerberus.name" . }}-app-config
-      {{- if .Values.global.nodeSelector -}}
-      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 -}}
-      {{- end -}}
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}
+      {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -68,4 +68,4 @@ spec:
     component: frontend
 
   type: {{ .Values.frontend.serviceType }}
-{{- end -}}
+{{- end }}

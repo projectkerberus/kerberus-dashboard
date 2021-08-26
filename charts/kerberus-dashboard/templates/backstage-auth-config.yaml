@@ -19,5 +19,5 @@ data:
   AUTH_MICROSOFT_CLIENT_ID: {{ .Values.providers.microsoft.clientId }}
   AUTH_MICROSOFT_TENANT_ID: {{ .Values.providers.microsoft.tenantId }}
   AUTH_SAML_ENTRY_POINT: {{ .Values.providers.saml.entryPoint }}
-  AUTH_GUEST: {{ .Values.providers.guest }}
+  AUTH_GUEST: {{ .Values.providers.guest | quote }}
 

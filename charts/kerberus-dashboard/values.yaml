@@ -136,49 +136,49 @@ kubernetes:
 providers:
   guest: true
   github:
-    clientId: a
-    clientSecret: a
-    token: a
+    clientId: <clientId>
+    clientSecret: <clientSecret>
+    token: <token>
   google:
     clientId: a
     clientSecret: a
   gitlab:
-    clientId: a
-    clientSecret: a
-    baseUrl: a
-    token: a
+    clientId: b
+    clientSecret: b
+    baseUrl: b
+    token: x
   okta:
-    clientId: a
-    clientSecret: a
-    audience: a
+    clientId: b
+    clientSecret: b
+    audience: b
   oauth2:
-    clientId: a
-    clientSecret: a
-    authUrl: a
-    tokenUrl: a
+    clientId: b
+    clientSecret: b
+    authUrl: b
+    tokenUrl: b
   auth0:
-    clientId: a
-    clientSecret: a
-    domain: a
+    clientId: b
+    clientSecret: b
+    domain: b
   microsoft:
-    clientId: a
-    clientSecret: a
-    tenantId: a
+    clientId: f
+    clientSecret: f
+    tenantId: f
   azure:
     api:
-      token: a
+      token: h
+  sentry:
+    token: e
+  rollbar:
+    accountToken: f
+  circleci:
+    authToken: r
+  newRelic:
+    restApiKey: r
+  travisci:
+    authToken: fake-travis-ci-auth-token
+  pagerduty:
+    token: h
   saml:
     entryPoint: a
     issuer: a
-  sentry:
-    token: a
-  rollbar:
-    accountToken: a
-  circleci:
-    authToken: a
-  newRelic:
-    restApiKey: a
-  travisci:
-    authToken: a
-  pagerduty:
-    token: a

@@ -83,8 +83,8 @@ auth:
         clientSecret: ${AUTH_GITLAB_CLIENT_SECRET}
         audience: ${GITLAB_BASE_URL}
     saml:
-      entryPoint: "http://localhost:7001/"
-      issuer: "passport-saml"
+      entryPoint: ${AUTH_SAML_ENTRY_POINT}
+      issuer: ${AUTH_SAML_ISSUER}
     okta:
       development:
         clientId: ${AUTH_OKTA_CLIENT_ID}
@@ -123,9 +123,6 @@ auth:
         clientId: ${AUTH_ONELOGIN_CLIENT_ID}
         clientSecret: ${AUTH_ONELOGIN_CLIENT_SECRET}
         issuer: ${AUTH_ONELOGIN_ISSUER}
-    saml:
-      entryPoint: ${AUTH_SAML_ENTRY_POINT}
-      issuer: ${AUTH_SAML_ISSUER}
 
 scaffolder:
   github:

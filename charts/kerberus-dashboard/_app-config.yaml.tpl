@@ -65,7 +65,8 @@ techdocs:
 
 auth:
   providers:
-    guest: ${AUTH_GUEST}
+    guest:
+      enabled: ${AUTH_GUEST}
     google:
       development:
         clientId: ${AUTH_GOOGLE_CLIENT_ID}

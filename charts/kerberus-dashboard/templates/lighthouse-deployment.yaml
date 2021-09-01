@@ -82,5 +82,5 @@ spec:
     app: backstage
     component: lighthouse-audit-service
 
-  type: {{ .Values.lighthouse.serviceType }}
+  type: {{ .Values.lighthouse.service.type }}
 {{- end -}}

@@ -78,5 +78,5 @@ spec:
     app: backstage
     component: backend
 
-  type: {{ .Values.backend.serviceType }}
+  type: {{ .Values.backend.service.type }}
 {{- end }}

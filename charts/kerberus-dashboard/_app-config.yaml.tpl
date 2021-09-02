@@ -154,6 +154,7 @@ catalog:
           groupFilter: securityEnabled eq false
   locations:
     - type: microsoft-graph-org
+      target: https://graph.microsoft.com/v1.0
       rules:
         - allow: [Group, User]
 {{- if .Values.backend.demoData }}

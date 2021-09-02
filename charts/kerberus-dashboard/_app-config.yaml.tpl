@@ -29,7 +29,7 @@ backend:
 
 proxy:
   '/argocd/api':
-      target: {{ .Values.argocd.baseUrl }}
+      target: {{ .Values.argocd.baseUrl }}/api/v1/
       changeOrigin: true
       secure: false
       headers:

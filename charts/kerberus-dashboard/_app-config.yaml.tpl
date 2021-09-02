@@ -134,30 +134,29 @@ catalog:
   rules:
     - allow: [Component, System, API, Group, User, Resource, Location]
   processors:
-    ldapOrg:
+    microsoftGraphOrg:
       providers:
-        - target: ldaps://ds.example.net
-          bind:
-            dn: uid=ldap-reader-user,ou=people,ou=example,dc=example,dc=net
-            secret: ${LDAP_SECRET}
-          users:
-            dn: ou=people,ou=example,dc=example,dc=net
-            options:
-              filter: (uid=*)
-            map:
-              description: l
-            set:
-              metadata.customField: 'hello'
-          groups:
-            dn: ou=access,ou=groups,ou=example,dc=example,dc=net
-            options:
-              filter: (&(objectClass=some-group-class)(!(groupType=email)))
-            map:
-              description: l
-            set:
-              metadata.customField: 'hello'
-{{- if .Values.backend.demoData }}
+        - target: https://graph.microsoft.com/v1.0
+          authority: https://login.microsoftonline.com
+          # If you don't know you tenantId, you can use Microsoft Graph Explorer
+          # to query it
+          tenantId: ${AUTH_MICROSOFT_TENANT_ID}
+          # Client Id and Secret can be created under Certificates & secrets in
+          # the App registration in the Microsoft Azure Portal.
+          clientId: ${AUTH_MICROSOFT_CLIENT_ID}
+          clientSecret: ${AUTH_MICROSOFT_CLIENT_SECRET}
+          # Optional filter for user, see Microsoft Graph API for the syntax
+          # See https://docs.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties
+          # and for the syntax https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter
+          userFilter: accountEnabled eq true
+          # Optional filter for group, see Microsoft Graph API for the syntax
+          # See https://docs.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties
+          groupFilter: securityEnabled eq false
   locations:
+    - type: microsoft-graph-org
+      rules:
+        - allow: [Group, User]
+{{- if .Values.backend.demoData }}
     # Backstage example components
     - type: github
       target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-components.yaml
@@ -177,8 +176,6 @@ catalog:
       target: https://github.com/projectkerberus/gcp-stack-template/blob/main/template-beta.yaml
       rules:
         - allow: [Template]
-{{- else }}
-  locations: []
 {{- end }}
 
 kubernetes:

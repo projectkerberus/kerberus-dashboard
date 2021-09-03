@@ -38,8 +38,7 @@ proxy:
   '/sonarqube':
     target: https://sonarcloud.io/api
     allowedMethods: ['GET']
-    headers:
-      Authorization: Basic ${SONARQUBE_AUTH}
+    auth: ${SONARQUBE_AUTH}
 
 integrations:
   github:

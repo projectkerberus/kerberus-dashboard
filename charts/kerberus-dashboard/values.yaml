@@ -101,13 +101,11 @@ postgresql:
 #       Components        #
 ###########################
 argocd:
-  baseUrl: http://argocd.test.io
   token: argocd.token=<token>
 
 sonarqube:
-  target: https://your.sonarqube.instance.com/api
+  target: https://sonarcloud.io/api
   token: <token>
-  projectKey: <key>
 ###########################
 #         Kerberus        #
 ###########################

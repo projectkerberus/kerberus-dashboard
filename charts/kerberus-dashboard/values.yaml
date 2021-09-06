@@ -128,7 +128,8 @@ appConfig:
   #   organization: Project Kerberus
 
 kubernetes:
-  url:
+  url: http://localhost:6443
+  token: a
   clusters:
     - name: local
       url: http://localhost:6443

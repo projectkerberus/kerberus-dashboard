@@ -184,10 +184,10 @@ kubernetes:
   clusterLocatorMethods:
     - type: "config"
       clusters:
-        {{- range $k8s := .Values.kubernetes }}
-          - name: {{ $k8s.name }}
-            url: {{ $k8s.url }}
-            token: {{ $k8s.token }}
+        {{- range $k8s := .Values.kubernetes.clusters }}
+          - name: {{ $k8s.name | quote }}
+            url: {{ $k8s.url | quote }}
+            serviceAccountToken: {{ $k8s.serviceAccountToken | quote }}
             skipTLSVerify: {{ $k8s.skipTLSVerify }}
             authProvider: {{ $k8s.authProvider }}
         {{- end }}

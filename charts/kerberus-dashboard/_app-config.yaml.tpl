@@ -184,8 +184,10 @@ kubernetes:
   clusterLocatorMethods:
     - type: "config"
       clusters:
-        - url: http://127.0.0.1:9999
-          name: minikube
-          authProvider: "serviceAccount"
-          skipTLSVerify: false
-          serviceAccountToken: ${K8S_MINIKUBE_TOKEN}
+        {{- range $k8s := .Values.kubernetes }}
+          - name: {{ $k8s.name }}
+            url: {{ $k8s.url }}
+            token: {{ $k8s.token }}
+            skipTLSVerify: {{ $k8s.skipTLSVerify }}
+            authProvider: {{ $k8s.authProvider }}
+        {{- end }}

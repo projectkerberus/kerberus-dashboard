@@ -128,8 +128,11 @@ appConfig:
   #   organization: Project Kerberus
 
 kubernetes:
-  url: http://192.168.99.129:6443
-  token: a
+  - name: local
+    url: http://localhost:6443
+    token: a
+    skipTLSVerify: false
+    authProvider: "serviceAccount"
 
 providers:
   guest:

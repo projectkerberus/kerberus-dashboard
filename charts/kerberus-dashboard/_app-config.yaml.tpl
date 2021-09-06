@@ -187,7 +187,7 @@ kubernetes:
         {{- range $k8s := .Values.kubernetes.clusters }}
           - name: {{ $k8s.name | quote }}
             url: {{ $k8s.url | quote }}
-            serviceAccountToken: {{ $k8s.serviceAccountToken }}
+            serviceAccountToken: {{ .Values.kubernetes.token }}
             skipTLSVerify: {{ $k8s.skipTLSVerify }}
             authProvider: {{ $k8s.authProvider | quote }}
         {{- end }}

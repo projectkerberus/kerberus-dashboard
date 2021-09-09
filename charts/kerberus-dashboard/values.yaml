@@ -49,7 +49,7 @@ backend:
   replicaCount: 1
   image:
     repository: ghcr.io/projectkerberus/kerberus-dashboard-backend
-    tag: 1.0.15
+    tag: 1.0.16
     pullPolicy: IfNotPresent
   resources:
     requests:

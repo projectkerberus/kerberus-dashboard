@@ -52,21 +52,21 @@ spec:
             - name: app-config
               mountPath: {{ printf "/app/%s" (include "kerberus.appConfigFilename" .) }}
               subPath: {{ include "kerberus.appConfigFilename" . }}
-            - name: github-app-credentials
-              mountPath: "/app/github-app-credentials.yaml"
-              subPath: "github-app-credentials.yaml"
-              readOnly: true
+            # - name: github-app-credentials
+            #   mountPath: "/app/github-app-credentials.yaml"
+            #   subPath: "github-app-credentials.yaml"
+            #   readOnly: true
 
       volumes:
         - name: app-config
           configMap:
             name: {{ include "kerberus.name" . }}-app-config
-        - name: github-app-credentials
-          secret:
-            secretName: github-app-credentials
-            items:
-            - key: github-app-credentials
-              path: github-app-credentials.yaml
+        # - name: github-app-credentials
+        #   secret:
+        #     secretName: github-app-credentials
+        #     items:
+        #     - key: github-app-credentials
+        #       path: github-app-credentials.yaml
 
       {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}

@@ -64,7 +64,9 @@ spec:
         - name: github-app-credentials
           secret:
             secretName: github-app-credentials
-            defaultMode: 0400
+            items:
+            - key: github-app-credentials
+              path: github-app-credentials.yaml
 
       {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}

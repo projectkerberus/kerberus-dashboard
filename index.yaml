@@ -28,6 +28,30 @@ entries:
     version: 0.2.0
   kerberus-dashboard:
   - apiVersion: v2
+    appVersion: 0.3.77
+    created: "2021-09-21T10:46:35.59916897Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.9.2
+    description: Kerberus Dashboard provides a GUI for the self-service concept provided
+      by Kerberus Project
+    digest: ee513835b782b929446468c13c915b5b8d736eff320b80f7c6cfe978183f958c
+    icon: https://github.com/projectkerberus/kerberus-dashboard/blob/main/docs/media/square_black_logo.png
+    maintainers:
+    - email: luca.bertelli@kiratech.it
+      name: Bertelli Luca
+      url: https://www.kiratech.it
+    - email: diego.braga@kiratech.it
+      name: Braga Diego
+      url: https://www.kiratech.it
+    name: kerberus-dashboard
+    type: application
+    urls:
+    - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.3.77/kerberus-dashboard-0.3.77.tgz
+    version: 0.3.77
+  - apiVersion: v2
     appVersion: 0.3.76
     created: "2021-09-21T10:17:16.736651544Z"
     dependencies:
@@ -1638,4 +1662,4 @@ entries:
     urls:
     - https://github.com/projectkerberus/kerberus-dashboard/releases/download/kerberus-dashboard-0.1.0/kerberus-dashboard-0.1.0.tgz
     version: 0.1.0
-generated: "2021-09-21T10:17:16.737999388Z"
+generated: "2021-09-21T10:46:35.600202909Z"

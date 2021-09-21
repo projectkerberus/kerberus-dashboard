@@ -43,7 +43,9 @@ proxy:
 integrations:
   github:
     - host: github.com
-      token: ${GITHUB_TOKEN}
+      apps:
+        - $include: github-app-credentials.yaml
+      {* token: ${GITHUB_TOKEN} *}
   gitlab:
     - host: gitlab.com
       token: ${GITLAB_TOKEN}

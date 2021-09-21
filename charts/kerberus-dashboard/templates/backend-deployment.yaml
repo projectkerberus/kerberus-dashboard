@@ -52,6 +52,10 @@ spec:
             - name: app-config
               mountPath: {{ printf "/app/%s" (include "kerberus.appConfigFilename" .) }}
               subPath: {{ include "kerberus.appConfigFilename" . }}
+            - name: github-app-credentials
+              mountPath: "/app/github-app-credentials.yaml"
+              subPath: "github-app-credentials.yaml"
+              readOnly: true
 
       volumes:
         - name: app-config

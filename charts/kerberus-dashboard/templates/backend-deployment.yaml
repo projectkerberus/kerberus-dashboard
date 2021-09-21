@@ -61,6 +61,10 @@ spec:
         - name: app-config
           configMap:
             name: {{ include "kerberus.name" . }}-app-config
+        - name: github-app-credentials
+          secret:
+            secretName: github-app-credentials
+            defaultMode: 0400
 
       {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- toYaml .Values.global.nodeSelector | nindent 8 }}

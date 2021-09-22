@@ -1,5 +1,5 @@
 app:
-  title: {{ .Values.organization }} - Project Kerberus
+  title: {{ .Values.organization }} - Krateo
   baseUrl: {{ .Values.frontendUrl }}
   googleAnalyticsTrackingId: {{ .Values.appConfig.app.googleAnalyticsTrackingId }}
 

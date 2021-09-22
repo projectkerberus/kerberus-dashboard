@@ -58,7 +58,7 @@ integrations:
 techdocs:
   builder: "local" # Alternatives - 'external'
   generator:
-    runIn: "docker" # Alternatives - 'local'
+    runIn: "local" # Alternatives - 'local'
   publisher:
     type: "local"
 

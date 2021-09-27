@@ -15,6 +15,7 @@ backend:
   cors:
     origin: {{ .Values.frontendUrl }}
     methods: [GET, POST, PUT, DELETE]
+    credentials: true
   lighthouseUrlname: {{ include "lighthouse.serviceName" . | quote }}
   database:
     client: pg

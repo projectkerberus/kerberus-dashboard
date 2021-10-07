@@ -187,3 +187,9 @@ providers:
   saml:
     entryPoint: a
     issuer: a
+
+auth:
+  github:
+    clientId: <clientId>
+    clientSecret: <clientSecret>
+    token: <token>

@@ -151,7 +151,8 @@ catalog:
           userFilter: accountEnabled eq true
           # Optional filter for group, see Microsoft Graph API for the syntax
           # See https://docs.microsoft.com/en-us/graph/api/resources/group?view=graph-rest-1.0#properties
-          groupFilter: securityEnabled eq false
+          # groupFilter: securityEnabled eq false
+          groupFilter: {{ .Values.microsoftGraphOrg.groupFilter }}
   locations:
     - type: microsoft-graph-org
       target: https://graph.microsoft.com/v1.0

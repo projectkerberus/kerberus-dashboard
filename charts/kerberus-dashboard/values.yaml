@@ -193,3 +193,6 @@ auth:
     clientId: <clientId>
     clientSecret: <clientSecret>
     token: <token>
+
+microsoftGraphOrg:
+  groupFilter: securityEnabled eq false

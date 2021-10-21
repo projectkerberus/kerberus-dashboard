@@ -136,6 +136,7 @@ kubernetes:
       serviceAccountToken: a
       skipTLSVerify: false
       authProvider: "serviceAccount"
+  customResources:
 
 providers:
   guest:

@@ -181,6 +181,12 @@ catalog:
 {{- end }}
 
 kubernetes:
+  customResources:
+    {{- range $k8s := .Values.kubernetes.customResources }}
+      - group: {{ $k8s.group | quote }}
+        apiVersion: {{ $k8s.apiVersion | quote }}
+        plural: {{ $k8s.plural | quote }}
+    {{- end }}
   serviceLocatorMethod:
     type: "multiTenant"
   clusterLocatorMethods:
@@ -192,10 +198,4 @@ kubernetes:
             serviceAccountToken: ${K8S_SA_TOKEN}
             skipTLSVerify: {{ $k8s.skipTLSVerify }}
             authProvider: {{ $k8s.authProvider | quote }}
-        {{- end }}
-      customResources:
-        {{- range $k8s := .Values.kubernetes.customResources }}
-          - group: {{ $k8s.group | quote }}
-            apiVersion: {{ $k8s.apiVersion | quote }}
-            plural: {{ $k8s.plural | quote }}
         {{- end }}

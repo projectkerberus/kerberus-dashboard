@@ -106,6 +106,13 @@ argocd:
 sonarqube:
   target: https://sonarcloud.io/api
   token: <token>
+
+grafana:
+  target: https://grafana.krateo.io/
+  token: "eyJrIjoiWHpRWnFMWmdrMHdCOGRoSnk4VlB0M1l6T3hEQUYzU20iLCJuIjoiYmFja3N0YWdlIiwiaWQiOjF9"
+
+prometheus:
+  target: https://prometheus.krateo.io/api/v1/
 ###########################
 #         Kerberus        #
 ###########################

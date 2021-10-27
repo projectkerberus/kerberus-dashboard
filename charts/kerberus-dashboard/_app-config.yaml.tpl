@@ -40,6 +40,12 @@ proxy:
     target: https://sonarcloud.io/api
     allowedMethods: ['GET']
     auth: ${SONARQUBE_AUTH}
+  "/grafana/api":
+    target: {{ .Values.grafana.target }}
+    headers:
+      Authorization: Bearer ${GRAFANA_AUTH}
+  "/prometheus/api":
+    target: {{ .Values.prometheus.target }}
 
 integrations:
   github:

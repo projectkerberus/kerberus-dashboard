@@ -47,6 +47,10 @@ proxy:
   "/prometheus/api":
     target: {{ .Values.prometheus.target }}
 
+
+grafana:
+  domain: {{ .Values.grafana.target }}
+
 integrations:
   github:
     - host: github.com

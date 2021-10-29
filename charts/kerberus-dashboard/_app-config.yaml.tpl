@@ -142,7 +142,7 @@ scaffolder:
 
 catalog:
   rules:
-    - allow: [Component, System, API, Group, User, Resource, Location]
+    - allow: [Component, System, API, Group, User, Resource, Location, Domain, Template]
   processors:
     microsoftGraphOrg:
       providers:
